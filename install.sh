@@ -110,8 +110,8 @@ EOF
 
 systemctl daemon-reload &> "${log_redirects}"
 
-systemctl enable dnsd.service &> "${log_redirects}"
-systemctl start dnsd.service &> "${log_redirects}"
+systemctl enable dnsd &> "${log_redirects}"
+systemctl start dnsd &> "${log_redirects}"
 
 if [ "${auto_update}" = true ]; then
   mkdir -p /opt/dnsd/bin &> "${log_redirects}"

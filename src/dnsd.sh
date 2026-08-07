@@ -173,8 +173,8 @@ EOF
 
     install_package dnscrypt-proxy
 
-    systemctl enable dnscrypt-proxy.service
-    systemctl start dnscrypt-proxy.service
+    systemctl enable dnscrypt-proxy
+    systemctl start dnscrypt-proxy
 
     dnscrypt_configs=(
       "/etc/dnscrypt-proxy.toml"
