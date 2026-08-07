@@ -102,15 +102,18 @@ fi
 
 install_package systemd-resolved
 
+systemctl enable systemd-resolved &> /dev/null
+systemctl start systemd-resolved &> /dev/null
+
 chattr -i /etc/resolv.conf &> /dev/null
 
-[ -f /run/systemd/resolve/stub-resolv.conf ] && ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+[ -f /run/systemd/resolve/stub-resolv.conf ] && ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf &> /dev/null
 
-mkdir -p /opt/dnsd/cache
+mkdir -p /opt/dnsd/cache &> /dev/null
 
 resolver=$(cat /opt/dnsd/cache/resolver 2> /dev/null || echo "none")
 
-echo "Resolver: ${resolver}"
+echo "DNSD started with the \"${resolver}\" resolver."
 
 check() {
   if dig -p 853 +tls +tries=1 +time=1 @one.one.one.one &> /dev/null; then
@@ -120,7 +123,7 @@ check() {
   fi
 
   if [ "${resolver}" = "dnscrypt" ] && (! dig -p 5300 +tries=1 +time=1 @127.0.0.1 &> /dev/null || ! dig -p 5300 +tries=1 +time=1 @::1 &> /dev/null); then
-    systemctl restart dnscrypt-proxy
+    systemctl restart dnscrypt-proxy &> /dev/null
 
     sleep 10
 
@@ -130,7 +133,7 @@ check() {
   fi
 
   if ! dig -p 53 +tries=1 +time=1 @127.0.0.53 &> /dev/null || [ -z "$(dig -p 53 +tries=1 +time=1 +short @127.0.0.53)" ]; then
-    systemctl restart systemd-resolved
+    systemctl restart systemd-resolved &> /dev/null
 
     sleep 10
 
@@ -147,9 +150,9 @@ check() {
     return 0
   fi
 
-  echo "${switch}" > /opt/dnsd/cache/resolver
+  echo "Switching to \"${switch}\" resolver..."
 
-  echo "Switching to '${switch}'..."
+  echo "${switch}" > /opt/dnsd/cache/resolver
 
   if [ "${switch}" = "dns_over_tls" ]; then
     sudo tee /etc/systemd/resolved.conf &> /dev/null << EOF
@@ -163,18 +166,18 @@ Domains=~.
 DNSOverTLS=yes
 EOF
 
-    systemctl restart systemd-resolved
+    systemctl restart systemd-resolved &> /dev/null
 
     uninstall_package dnscrypt-proxy
   elif [ "${switch}" = "dnscrypt" ]; then
     tee /etc/systemd/resolved.conf &> /dev/null <<< ""
 
-    systemctl restart systemd-resolved
+    systemctl restart systemd-resolved &> /dev/null
 
     install_package dnscrypt-proxy
 
-    systemctl enable dnscrypt-proxy
-    systemctl start dnscrypt-proxy
+    systemctl enable dnscrypt-proxy &> /dev/null
+    systemctl start dnscrypt-proxy &> /dev/null
 
     dnscrypt_configs=(
       "/etc/dnscrypt-proxy.toml"
@@ -205,7 +208,7 @@ EOF
 
         dnscrypt_config="/etc/dnscrypt-proxy/dnscrypt-proxy.toml"
       else
-        throw_system_is_too_old
+        echo "\"dnscrypt-proxy\" config file was not found."
       fi
     fi
 
@@ -225,7 +228,7 @@ minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3"
 cache_file = "/var/cache/dnscrypt-proxy/public-resolvers.md"
 EOF
 
-    systemctl restart dnscrypt-proxy
+    systemctl restart dnscrypt-proxy &> /dev/null
 
     tee /etc/systemd/resolved.conf &> /dev/null << EOF
 [Resolve]
@@ -236,18 +239,18 @@ Domains=~.
 DNSOverTLS=no
 EOF
 
-    systemctl restart systemd-resolved
+    systemctl restart systemd-resolved &> /dev/null
   elif [ "${switch}" = "local" ]; then
     tee /etc/systemd/resolved.conf &> /dev/null <<< ""
 
-    systemctl restart systemd-resolved
+    systemctl restart systemd-resolved &> /dev/null
 
     uninstall_package dnscrypt-proxy
   fi
 
   resolver="${switch}"
 
-  echo "Successfully switched to '${switch}'."
+  echo "Successfully switched to \"${switch}\" resolver."
 
   sleep 1
 
