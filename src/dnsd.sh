@@ -143,7 +143,7 @@ check() {
   fi
 
   if [ "${strategy}" = "${switch}" ]; then
-    sleep 1
+    sleep 10
 
     check
 
@@ -252,7 +252,7 @@ EOF
 
   echo "Successfully switched to \"${switch}\" strategy."
 
-  sleep 1
+  sleep 10
 
   check
 }
