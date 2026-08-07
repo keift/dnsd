@@ -107,14 +107,16 @@ chattr -i /etc/resolv.conf &> /dev/null
 [ -f /run/systemd/resolve/stub-resolv.conf ] && ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
 mkdir -p /opt/dnsd/config
-mkdir -p /opt/dnsd/cache
 
 auto_update=$(cat /opt/dnsd/config/auto_update 2> /dev/null || echo "false")
-resolver=$(cat /opt/dnsd/cache/resolver 2> /dev/null || echo "none")
 
 if [ "${auto_update}" = true ]; then
   curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/install.sh | bash -s -- --auto-update
 fi
+
+mkdir -p /opt/dnsd/cache
+
+resolver=$(cat /opt/dnsd/cache/resolver 2> /dev/null || echo "none")
 
 echo "Resolver: ${resolver}"
 
