@@ -152,8 +152,6 @@ check() {
 
   echo "Switching to \"${switch}\" resolver..."
 
-  echo "${switch}" > /opt/dnsd/cache/resolver
-
   if [ "${switch}" = "dns_over_tls" ]; then
     tee /etc/systemd/resolved.conf &> /dev/null << EOF
 [Resolve]
@@ -249,6 +247,8 @@ EOF
   fi
 
   resolver="${switch}"
+
+  echo "${resolver}" > /opt/dnsd/cache/resolver
 
   echo "Successfully switched to \"${switch}\" resolver."
 
