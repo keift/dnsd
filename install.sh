@@ -182,6 +182,7 @@ fi
 echo -e "  ${legible}Installing dependencies...${reset}"
 
 install_package curl
+install_package systemd-resolved
 
 echo -e "  ${legible}Downloading DNSD...${reset}"
 
