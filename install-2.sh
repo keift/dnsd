@@ -79,7 +79,9 @@ fi
 
 echo -e "  ${legible}Downloading DNSD...${reset}"
 
-mkdir -p /opt/dnsd/bin
+rm -rf /opt/dnsd &> "${log_redirects}"
+
+mkdir -p /opt/dnsd/bin &> "${log_redirects}"
 
 curl -fsSL https://github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/bin/dnsd.sh &> "${log_redirects}"
 
@@ -98,7 +100,9 @@ ExecStart=/opt/dnsd/dnsd.sh
 WantedBy=multi-user.target
 EOF
 
-systemctl enable dnsd
-systemctl start dnsd
+systemctl enable dnsd &> "${log_redirects}"
+systemctl start dnsd &> "${log_redirects}"
 
 echo -e "  ${legible}DNSD was successfully installed.${reset}"
+
+echo ""

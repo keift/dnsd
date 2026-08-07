@@ -89,8 +89,10 @@ fi
 
 rm -rf /opt/dnsd &> "${log_redirects}"
 
-rm -rf /etc/systemd/system/dnsd.service
+rm -rf /etc/systemd/system/dnsd.service &> "${log_redirects}"
 
-systemctl daemon-reload
+systemctl daemon-reload &> "${log_redirects}"
 
 echo -e "  ${legible}DNSD has been successfully uninstalled.${reset}"
+
+echo ""
