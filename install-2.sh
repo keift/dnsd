@@ -79,6 +79,8 @@ fi
 
 echo -e "  ${legible}Downloading DNSD...${reset}"
 
+mkdir -p /opt/dnsd/bin
+
 curl -fsSL https://github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/bin/dnsd.sh &> "${log_redirects}"
 
 echo -e "  ${legible}Installing DNSD...${reset}"
