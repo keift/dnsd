@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+auto_update=false
 debug=false
 
 for arg in "${@}"; do
+  [ "${arg}" = "--auto-update" ] && auto_update=true
   [ "${arg}" = "--debug" ] && debug=true
 done
 
@@ -105,6 +107,12 @@ ExecStart=/opt/dnsd/bin/dnsd.sh
 [Install]
 WantedBy=multi-user.target
 EOF
+
+if [ "${auto_update}" = true ]; then
+  mkdir -p /opt/dnsd/config
+
+  echo "true" > /opt/dnsd/config/auto_update
+fi
 
 systemctl enable dnsd &> "${log_redirects}"
 systemctl start dnsd &> "${log_redirects}"
