@@ -94,7 +94,7 @@ After=systemd-resolved.service
 
 [Service]
 Type=simple
-ExecStart=/opt/dnsd/dnsd.sh
+ExecStart=/opt/dnsd/bin/dnsd.sh
 
 [Install]
 WantedBy=multi-user.target
