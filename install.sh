@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 
-auto_update=false
 debug=false
 
 for arg in "${@}"; do
-  [ "${arg}" = "--auto-update" ] && auto_update=true
   [ "${arg}" = "--debug" ] && debug=true
 done
 
@@ -91,10 +89,6 @@ chmod +x /opt/dnsd/bin/dnsd.sh &> "${log_redirects}"
 
 echo -e "  ${legible}Installing DNSD...${reset}"
 
-rm -rf /etc/systemd/system/dnsd.service &> "${log_redirects}"
-
-systemctl daemon-reload &> "${log_redirects}"
-
 tee /etc/systemd/system/dnsd.service &> /dev/null << EOF
 [Unit]
 Description=Maintain your systemd-resolved.
@@ -112,41 +106,6 @@ systemctl daemon-reload &> "${log_redirects}"
 
 systemctl enable dnsd &> "${log_redirects}"
 systemctl start dnsd &> "${log_redirects}"
-
-if [ "${auto_update}" = true ]; then
-  mkdir -p /opt/dnsd/bin &> "${log_redirects}"
-
-  curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_auto_update.sh > /opt/dnsd/bin/dnsd_auto_update.sh
-
-  chmod +x /opt/dnsd/bin/dnsd_auto_update.sh &> "${log_redirects}"
-
-  tee /etc/systemd/system/dnsd-auto-update.service &> /dev/null << EOF
-[Unit]
-Description=dnsd auto update.
-After=dnsd.service
-
-[Service]
-Type=simple
-ExecStart=/opt/dnsd/bin/dnsd_auto_update.sh
-EOF
-
-  tee /etc/systemd/system/dnsd-auto-update.timer &> /dev/null << EOF
-[Unit]
-Description=dnsd auto update.
-
-[Timer]
-OnCalendar=daily
-Persistent=true
-
-[Install]
-WantedBy=timers.target
-EOF
-
-  systemctl daemon-reload &> "${log_redirects}"
-
-  systemctl enable dnsd-auto-update.timer &> "${log_redirects}"
-  systemctl start dnsd-auto-update.timer &> "${log_redirects}"
-fi
 
 echo -e "  ${legible}DNSD was successfully installed.${reset}"
 
