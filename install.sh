@@ -104,6 +104,9 @@ EOF
 
 systemctl daemon-reload &> "${log_redirects}"
 
+systemctl disable dnsd &> "${log_redirects}"
+systemctl stop dnsd &> "${log_redirects}"
+
 systemctl enable dnsd &> "${log_redirects}"
 systemctl start dnsd &> "${log_redirects}"
 
