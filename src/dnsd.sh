@@ -155,7 +155,7 @@ check() {
   echo "${switch}" > /opt/dnsd/cache/resolver
 
   if [ "${switch}" = "dns_over_tls" ]; then
-    sudo tee /etc/systemd/resolved.conf &> /dev/null << EOF
+    tee /etc/systemd/resolved.conf &> /dev/null << EOF
 [Resolve]
 DNS=1.1.1.1#one.one.one.one
 DNS=2606:4700:4700::1111#one.one.one.one
