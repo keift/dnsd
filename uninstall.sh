@@ -93,6 +93,12 @@ rm -rf /etc/systemd/system/dnsd.service &> "${log_redirects}"
 
 systemctl daemon-reload &> "${log_redirects}"
 
+tee /etc/systemd/resolved.conf &> /dev/null <<< ""
+
+[ -f /run/systemd/resolve/stub-resolv.conf ] && ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf &> "${log_redirects}"
+
+systemctl restart systemd-resolved &> "${log_redirects}"
+
 echo -e "  ${legible}DNSD has been successfully uninstalled.${reset}"
 
 echo ""

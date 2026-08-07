@@ -1,6 +1,6 @@
 # dnsd - maintain your systemd-resolved
 
-This tool constantly checks your systemd-resolved. It always forces DNS-over-TLS. However, if DoT access is blocked on your network, it starts using the DNSCrypt protocol. But if that also fails, it fallsbacks to your local DNS.
+This tool constantly checks your systemd-resolved. It always forces DNS-over-TLS. However, if DNS-over-TLS access is blocked on your network, it starts using the DNSCrypt protocol. But if that also fails, it fallsbacks to your local DNS.
 
 ## Installation
 
