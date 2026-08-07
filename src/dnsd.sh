@@ -111,9 +111,9 @@ chattr -i /etc/resolv.conf &> /dev/null
 
 mkdir -p /opt/dnsd/cache &> /dev/null
 
-resolver=$(cat /opt/dnsd/cache/resolver 2> /dev/null || echo "none")
+strategy=$(cat /opt/dnsd/cache/strategy 2> /dev/null || echo "none")
 
-echo "DNSD started with the \"${resolver}\" resolver."
+echo "DNSD started with the \"${strategy}\" strategy."
 
 check() {
   if dig -p 853 +tls +tries=1 +time=10 @one.one.one.one &> /dev/null; then
@@ -122,7 +122,7 @@ check() {
     local switch="dnscrypt"
   fi
 
-  if [ "${resolver}" = "dnscrypt" ] && (! dig -p 5300 +tries=1 +time=10 @127.0.0.1 &> /dev/null || ! dig -p 5300 +tries=1 +time=10 @::1 &> /dev/null); then
+  if [ "${strategy}" = "dnscrypt" ] && (! dig -p 5300 +tries=1 +time=10 @127.0.0.1 &> /dev/null || ! dig -p 5300 +tries=1 +time=10 @::1 &> /dev/null); then
     systemctl restart dnscrypt-proxy &> /dev/null
 
     sleep 10
@@ -142,7 +142,7 @@ check() {
     fi
   fi
 
-  if [ "${resolver}" = "${switch}" ]; then
+  if [ "${strategy}" = "${switch}" ]; then
     sleep 1
 
     check
@@ -150,7 +150,7 @@ check() {
     return 0
   fi
 
-  echo "Switching to \"${switch}\" resolver..."
+  echo "Switching to \"${switch}\" strategy..."
 
   if [ "${switch}" = "dns_over_tls" ]; then
     tee /etc/systemd/resolved.conf &> /dev/null << EOF
@@ -246,11 +246,11 @@ EOF
     uninstall_package dnscrypt-proxy
   fi
 
-  resolver="${switch}"
+  strategy="${switch}"
 
-  echo "${resolver}" > /opt/dnsd/cache/resolver
+  echo "${strategy}" > /opt/dnsd/cache/strategy
 
-  echo "Successfully switched to \"${switch}\" resolver."
+  echo "Successfully switched to \"${switch}\" strategy."
 
   sleep 1
 
