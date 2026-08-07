@@ -118,7 +118,7 @@ strategy=$(cat /opt/dnsd/cache/strategy 2> /dev/null || echo "none")
 if [ "${strategy}" = "none" ]; then
   echo "No strategy is currently being used."
 else
-  echo "\"${strategy}\" strategy is currently being used."
+  echo "Strategy \"${strategy}\" is currently being used."
 fi
 
 check() {
