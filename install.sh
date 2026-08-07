@@ -211,8 +211,6 @@ ExecStart=/opt/dnsd/bin/dnsd.sh
 WantedBy=multi-user.target
 EOF
 
-systemctl daemon-reload &> "${log_redirects}"
-
 systemctl disable dnsd &> "${log_redirects}"
 systemctl stop dnsd &> "${log_redirects}"
 

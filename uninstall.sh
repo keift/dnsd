@@ -207,8 +207,6 @@ rm -rf /opt/dnsd &> "${log_redirects}"
 
 rm -rf /etc/systemd/system/dnsd.service &> "${log_redirects}"
 
-systemctl daemon-reload &> "${log_redirects}"
-
 systemctl disable dnsd &> "${log_redirects}"
 systemctl stop dnsd &> "${log_redirects}"
 
