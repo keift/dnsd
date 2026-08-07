@@ -35,6 +35,108 @@ version="1.0"
 
 last_commit_id=$(curl -s --max-time 10 https://api.github.com/repos/keift/dnsd/commits/main | grep -m 1 '"sha":' | cut -d '"' -f 4 | cut -c 1-7)
 
+detect_system() {
+  if command -v rpm-ostree &> /dev/null; then
+    package_manager="rpm-ostree"
+  elif command -v apt &> /dev/null; then
+    package_manager="apt"
+  elif command -v dnf &> /dev/null; then
+    package_manager="dnf"
+  elif command -v pacman &> /dev/null; then
+    package_manager="pacman"
+  elif command -v zypper &> /dev/null; then
+    package_manager="zypper"
+  elif command -v xbps-install &> /dev/null; then
+    package_manager="xbps"
+  elif command -v apk &> /dev/null; then
+    package_manager="apk"
+  elif command -v emerge &> /dev/null; then
+    package_manager="emerge"
+  elif command -v slackpkg &> /dev/null; then
+    package_manager="slackpkg"
+  elif command -v eopkg &> /dev/null; then
+    package_manager="eopkg"
+  elif command -v opkg &> /dev/null; then
+    package_manager="opkg"
+  else
+    package_manager="unknown"
+  fi
+}
+
+detect_system
+
+install_package() {
+  local package_name="${1}"
+
+  if [ "${package_manager}" = "rpm-ostree" ]; then
+    rpm-ostree install -y "${package_name}" &> "${log_redirects}" && rpm-ostree apply-live &> "${log_redirects}"
+  elif [ "${package_manager}" = "apt" ]; then
+    apt install -y "${package_name}" &> "${log_redirects}"
+  elif [ "${package_manager}" = "dnf" ]; then
+    dnf install -y "${package_name}" &> "${log_redirects}"
+  elif [ "${package_manager}" = "pacman" ]; then
+    pacman -S --noconfirm "${package_name}" &> "${log_redirects}"
+  elif [ "${package_manager}" = "zypper" ]; then
+    zypper -n install "${package_name}" &> "${log_redirects}"
+  elif [ "${package_manager}" = "xbps" ]; then
+    xbps-install -y "${package_name}" &> "${log_redirects}"
+  elif [ "${package_manager}" = "apk" ]; then
+    apk add "${package_name}" &> "${log_redirects}"
+  elif [ "${package_manager}" = "emerge" ]; then
+    emerge "${package_name}" &> "${log_redirects}"
+  elif [ "${package_manager}" = "slackpkg" ]; then
+    slackpkg -batch=on -default_answer=y install "${package_name}" &> "${log_redirects}"
+  elif [ "${package_manager}" = "eopkg" ]; then
+    eopkg install -y "${package_name}" &> "${log_redirects}"
+  elif [ "${package_manager}" = "opkg" ]; then
+    opkg install "${package_name}" &> "${log_redirects}"
+  else
+    print_head
+
+    echo -e "  ${red}Unsupported package manager.${reset}"
+
+    echo ""
+
+    exit 1
+  fi
+}
+
+uninstall_package() {
+  local package_name="${1}"
+
+  if [ "${package_manager}" = "rpm-ostree" ]; then
+    rpm-ostree uninstall -y "${package_name}" &> "${log_redirects}" && rpm-ostree apply-live &> "${log_redirects}"
+  elif [ "${package_manager}" = "apt" ]; then
+    apt remove -y "${package_name}" &> "${log_redirects}"
+  elif [ "${package_manager}" = "dnf" ]; then
+    dnf remove -y "${package_name}" &> "${log_redirects}"
+  elif [ "${package_manager}" = "pacman" ]; then
+    pacman -R --noconfirm "${package_name}" &> "${log_redirects}"
+  elif [ "${package_manager}" = "zypper" ]; then
+    zypper -n remove "${package_name}" &> "${log_redirects}"
+  elif [ "${package_manager}" = "xbps" ]; then
+    xbps-remove -y "${package_name}" &> "${log_redirects}"
+  elif [ "${package_manager}" = "apk" ]; then
+    apk del "${package_name}" &> "${log_redirects}"
+  elif [ "${package_manager}" = "emerge" ]; then
+    emerge --unmerge "${package_name}" &> "${log_redirects}"
+  elif [ "${package_manager}" = "slackpkg" ]; then
+    slackpkg -batch=on -default_answer=y remove "${package_name}" &> "${log_redirects}"
+  elif [ "${package_manager}" = "eopkg" ]; then
+    eopkg remove -y "${package_name}" &> "${log_redirects}"
+  elif [ "${package_manager}" = "opkg" ]; then
+    opkg remove "${package_name}" &> "${log_redirects}"
+  else
+    print_head
+
+    echo -e "  ${red}Unsupported package manager.${reset}"
+
+    echo ""
+
+    exit 1
+  fi
+}
+
 print_head() {
   clear
 
@@ -77,6 +179,18 @@ if [ "${EUID}" != "0" ]; then
   exit 1
 fi
 
+echo -e "  ${legible}DNS settings are being removed...${reset}"
+
+install_package systemd-resolved
+
+uninstall_package dnscrypt-proxy
+
+tee /etc/systemd/resolved.conf &> /dev/null <<< ""
+
+[ -f /run/systemd/resolve/stub-resolv.conf ] && ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf &> "${log_redirects}"
+
+systemctl restart systemd-resolved &> "${log_redirects}"
+
 echo -e "  ${legible}Uninstalling DNSD...${reset}"
 
 if [ ! -d /opt/dnsd ]; then
@@ -95,12 +209,6 @@ systemctl daemon-reload &> "${log_redirects}"
 
 systemctl disable dnsd &> "${log_redirects}"
 systemctl stop dnsd &> "${log_redirects}"
-
-tee /etc/systemd/resolved.conf &> /dev/null <<< ""
-
-[ -f /run/systemd/resolve/stub-resolv.conf ] && ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf &> "${log_redirects}"
-
-systemctl restart systemd-resolved &> "${log_redirects}"
 
 echo -e "  ${legible}DNSD has been successfully uninstalled.${reset}"
 
