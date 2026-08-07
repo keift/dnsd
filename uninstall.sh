@@ -193,8 +193,6 @@ tee /etc/systemd/resolved.conf &> /dev/null <<< ""
 
 systemctl restart systemd-resolved &> "${log_redirects}"
 
-echo -e "  ${legible}Uninstalling DNSD...${reset}"
-
 if [ ! -d /opt/dnsd ]; then
   echo -e "  ${legible}DNSD already not installed.${reset}"
 
@@ -202,6 +200,8 @@ if [ ! -d /opt/dnsd ]; then
 
   exit 0
 fi
+
+echo -e "  ${legible}Uninstalling DNSD...${reset}"
 
 rm -rf /opt/dnsd &> "${log_redirects}"
 
