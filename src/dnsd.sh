@@ -34,7 +34,7 @@ install_package() {
   local package_name="${1}"
 
   if [ "${package_manager}" = "rpm-ostree" ]; then
-    rpm-ostree install -y "${package_name}" &> /dev/null && rpm-ostree apply-live &> /dev/null
+    rpm-ostree install -y "${package_name}" &> /dev/null
   elif [ "${package_manager}" = "apt" ]; then
     apt install -y "${package_name}" &> /dev/null
   elif [ "${package_manager}" = "dnf" ]; then
@@ -66,7 +66,7 @@ uninstall_package() {
   local package_name="${1}"
 
   if [ "${package_manager}" = "rpm-ostree" ]; then
-    rpm-ostree uninstall -y "${package_name}" &> /dev/null && rpm-ostree apply-live &> /dev/null
+    rpm-ostree uninstall -y "${package_name}" &> /dev/null
   elif [ "${package_manager}" = "apt" ]; then
     apt remove -y "${package_name}" &> /dev/null
   elif [ "${package_manager}" = "dnf" ]; then
@@ -101,6 +101,8 @@ if ! command -v systemctl &> /dev/null; then
 fi
 
 install_package systemd-resolved
+
+[ "${package_manager}" = "rpm-ostree" ] && rpm-ostree apply-live &> "${log_redirects}"
 
 systemctl enable systemd-resolved &> /dev/null
 systemctl start systemd-resolved &> /dev/null
@@ -167,12 +169,16 @@ EOF
     systemctl restart systemd-resolved &> /dev/null
 
     uninstall_package dnscrypt-proxy
+
+    [ "${package_manager}" = "rpm-ostree" ] && rpm-ostree apply-live &> "${log_redirects}"
   elif [ "${switch}" = "dnscrypt" ]; then
     tee /etc/systemd/resolved.conf &> /dev/null <<< ""
 
     systemctl restart systemd-resolved &> /dev/null
 
     install_package dnscrypt-proxy
+
+    [ "${package_manager}" = "rpm-ostree" ] && rpm-ostree apply-live &> "${log_redirects}"
 
     systemctl enable dnscrypt-proxy &> /dev/null
     systemctl start dnscrypt-proxy &> /dev/null
@@ -244,6 +250,8 @@ EOF
     systemctl restart systemd-resolved &> /dev/null
 
     uninstall_package dnscrypt-proxy
+
+    [ "${package_manager}" = "rpm-ostree" ] && rpm-ostree apply-live &> "${log_redirects}"
   fi
 
   strategy="${switch}"

@@ -69,7 +69,7 @@ install_package() {
   local package_name="${1}"
 
   if [ "${package_manager}" = "rpm-ostree" ]; then
-    rpm-ostree install -y "${package_name}" &> "${log_redirects}" && rpm-ostree apply-live &> "${log_redirects}"
+    rpm-ostree install -y "${package_name}" &> "${log_redirects}"
   elif [ "${package_manager}" = "apt" ]; then
     apt install -y "${package_name}" &> "${log_redirects}"
   elif [ "${package_manager}" = "dnf" ]; then
@@ -105,7 +105,7 @@ uninstall_package() {
   local package_name="${1}"
 
   if [ "${package_manager}" = "rpm-ostree" ]; then
-    rpm-ostree uninstall -y "${package_name}" &> "${log_redirects}" && rpm-ostree apply-live &> "${log_redirects}"
+    rpm-ostree uninstall -y "${package_name}" &> "${log_redirects}"
   elif [ "${package_manager}" = "apt" ]; then
     apt remove -y "${package_name}" &> "${log_redirects}"
   elif [ "${package_manager}" = "dnf" ]; then
@@ -183,6 +183,8 @@ echo -e "  ${legible}Installing dependencies...${reset}"
 
 install_package curl
 install_package systemd-resolved
+
+[ "${package_manager}" = "rpm-ostree" ] && rpm-ostree apply-live &> "${log_redirects}"
 
 echo -e "  ${legible}Downloading DNSD...${reset}"
 
