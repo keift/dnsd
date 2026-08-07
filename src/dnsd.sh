@@ -115,7 +115,11 @@ mkdir -p /opt/dnsd/cache &> /dev/null
 
 strategy=$(cat /opt/dnsd/cache/strategy 2> /dev/null || echo "none")
 
-echo "\"${strategy}\" strategy is currently being used."
+if [ "${strategy}" = "none "]; then
+  echo "No strategy is currently being used."
+else
+  echo "\"${strategy}\" strategy is currently being used."
+fi
 
 check() {
   if dig -p 853 +tls +tries=1 +time=1 @one.one.one.one &> /dev/null; then
