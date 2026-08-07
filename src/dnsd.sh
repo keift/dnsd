@@ -106,14 +106,6 @@ chattr -i /etc/resolv.conf &> /dev/null
 
 [ -f /run/systemd/resolve/stub-resolv.conf ] && ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
-mkdir -p /opt/dnsd/config
-
-auto_update=$(cat /opt/dnsd/config/auto_update 2> /dev/null || echo "false")
-
-if [ "${auto_update}" = true ]; then
-  curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/install.sh | bash -s -- --auto-update
-fi
-
 mkdir -p /opt/dnsd/cache
 
 resolver=$(cat /opt/dnsd/cache/resolver 2> /dev/null || echo "none")
@@ -181,8 +173,8 @@ EOF
 
     install_package dnscrypt-proxy
 
-    systemctl enable dnscrypt-proxy
-    systemctl start dnscrypt-proxy
+    systemctl enable dnscrypt-proxy.service
+    systemctl start dnscrypt-proxy.service
 
     dnscrypt_configs=(
       "/etc/dnscrypt-proxy.toml"
