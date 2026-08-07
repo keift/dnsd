@@ -83,9 +83,11 @@ rm -rf /opt/dnsd &> "${log_redirects}"
 
 mkdir -p /opt/dnsd/bin &> "${log_redirects}"
 
-curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/bin/dnsd.sh &> "${log_redirects}"
+curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/bin/dnsd.sh
 
 echo -e "  ${legible}Installing DNSD...${reset}"
+
+curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/uninstall.sh | sudo bash &> "${log_redirects}"
 
 tee /etc/systemd/system/dnsd.service &> /dev/null << EOF
 [Unit]
