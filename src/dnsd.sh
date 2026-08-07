@@ -122,28 +122,28 @@ else
 fi
 
 check() {
-  if dig -p 853 +tls +tries=1 +time=1 @one.one.one.one root-servers.net &> /dev/null; then
+  if dig -p 853 +tls +tries=1 +time=1 @one.one.one.one &> /dev/null; then
     local switch="dns_over_tls"
   else
     local switch="dnscrypt"
   fi
 
-  if [ "${strategy}" = "dnscrypt" ] && (! dig -p 5300 +tries=1 +time=1 @127.0.0.1 root-servers.net &> /dev/null || ! dig -p 5300 +tries=1 +time=1 @::1 root-servers.net &> /dev/null); then
+  if [ "${strategy}" = "dnscrypt" ] && (! dig -p 5300 +tries=1 +time=1 @127.0.0.1 &> /dev/null || ! dig -p 5300 +tries=1 +time=1 @::1 &> /dev/null); then
     systemctl restart dnscrypt-proxy &> /dev/null
 
     sleep 10
 
-    if ! dig -p 5300 +tries=1 +time=1 @127.0.0.1 root-servers.net &> /dev/null || ! dig -p 5300 +tries=1 +time=1 @::1 root-servers.net &> /dev/null; then
+    if ! dig -p 5300 +tries=1 +time=1 @127.0.0.1 &> /dev/null || ! dig -p 5300 +tries=1 +time=1 @::1 &> /dev/null; then
       local switch="local"
     fi
   fi
 
-  if ! dig -p 53 +tries=1 +time=1 @127.0.0.53 root-servers.net &> /dev/null || [ -z "$(dig -p 53 +tries=1 +time=1 +short @127.0.0.53)" ]; then
+  if [ "${strategy}" != "local" ] && (! dig -p 53 +tries=1 +time=1 @127.0.0.53 &> /dev/null || [ -z "$(dig -p 53 +tries=1 +time=1 +short @127.0.0.53)" ]); then
     systemctl restart systemd-resolved &> /dev/null
 
     sleep 10
 
-    if ! dig -p 53 +tries=1 +time=1 @127.0.0.53 root-servers.net &> /dev/null || [ -z "$(dig -p 53 +tries=1 +time=1 +short @127.0.0.53)" ]; then
+    if ! dig -p 53 +tries=1 +time=1 @127.0.0.53 &> /dev/null || [ -z "$(dig -p 53 +tries=1 +time=1 +short @127.0.0.53)" ]; then
       local switch="local"
     fi
   fi
@@ -166,7 +166,6 @@ DNS=2606:4700:4700::1111#one.one.one.one
 DNS=1.0.0.1#one.one.one.one
 DNS=2606:4700:4700::1001#one.one.one.one
 
-Domains=~.
 DNSOverTLS=yes
 EOF
 
