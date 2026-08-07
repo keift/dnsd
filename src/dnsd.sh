@@ -106,9 +106,9 @@ chattr -i /etc/resolv.conf &> /dev/null
 
 [ -f /run/systemd/resolve/stub-resolv.conf ] && ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
-mkdir -p /var/cache/dnsd
+mkdir -p /opt/dnsd/cache
 
-resolver=$(cat /var/cache/dnsd/resolver 2> /dev/null || echo "none")
+resolver=$(cat /opt/dnsd/cache/resolver 2> /dev/null || echo "none")
 
 echo "Resolver: ${resolver}"
 
@@ -147,7 +147,7 @@ check() {
     return 0
   fi
 
-  echo "${switch}" > /var/cache/dnsd/resolver
+  echo "${switch}" > /opt/dnsd/cache/resolver
 
   echo "Switching to '${switch}'..."
 
