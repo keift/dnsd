@@ -237,7 +237,7 @@ if [ "${update}" = true ]; then
 
   tee /etc/systemd/system/dnsd-update.service &> /dev/null << EOF
 [Unit]
-Description=DNSD auto update.
+Description=DNSD update.
 After=dnsd.service
 
 [Service]
@@ -247,7 +247,7 @@ EOF
 
   tee /etc/systemd/system/dnsd-update.timer &> /dev/null << EOF
 [Unit]
-Description=DNSD auto update.
+Description=DNSD update.
 
 [Timer]
 OnCalendar=daily
