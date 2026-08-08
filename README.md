@@ -7,7 +7,7 @@ This tool constantly checks your systemd-resolved. It always forces DNS-over-TLS
 You can install it as follows.
 
 ```shell
-curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/install.sh | sudo bash
+curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/install.sh | sudo bash -s -- --updates
 ```
 
 ## Uninstall

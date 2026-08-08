@@ -236,6 +236,8 @@ systemctl enable dnsd &> "${log_redirects}"
 systemctl start dnsd &> "${log_redirects}"
 
 if [ "${updates}" = true ]; then
+  mkdir -p /opt/dnsd/bin &> "${log_redirects}"
+
   curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_update.sh > /opt/dnsd/bin/dnsd_update.sh
 
   chmod +x /opt/dnsd/bin/dnsd_update.sh &> "${log_redirects}"
