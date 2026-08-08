@@ -104,12 +104,14 @@ current_version=$(cat /opt/dnsd/bin/dnsd.sh 2> /dev/null | sha256sum)
 latest_version=$(curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh 2> /dev/null | sha256sum)
 
 if [ "${current_version}" != "${latest_version}" ]; then
-  echo "Updating to new version..."
+  echo "Updating to the latest version..."
 
-  new_version=$(curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh 2> /dev/null)
+  latest=$(curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh 2> /dev/null)
 
-  if echo "${new_version}" | grep -iq "/usr/bin/env bash"; then
-    echo "${new_version}" > /opt/dnsd/bin/dnsd.sh
+  if echo "${latest}" | grep -iq "/usr/bin/env bash"; then
+    echo "${latest}" > /opt/dnsd/bin/dnsd.sh
+
+    echo "Updated successfully."
 
     systemctl restart dnsd &> /dev/null
   fi
