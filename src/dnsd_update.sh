@@ -30,8 +30,8 @@ if [ "${current_version}" != "${latest_version}" ] || [ "${current_version_updat
     systemctl restart dnsd-update &> /dev/null
     systemctl restart dnsd-update.timer &> /dev/null
   else
-    rm -rf /opt/dnsd/bin/dnsd.sh-tmp
-    rm -rf /opt/dnsd/bin/dnsd_update.sh-tmp
+    rm -f /opt/dnsd/bin/dnsd.sh-tmp
+    rm -f /opt/dnsd/bin/dnsd_update.sh-tmp
 
     echo "Update cancelled."
   fi
