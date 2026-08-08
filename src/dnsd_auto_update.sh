@@ -7,7 +7,10 @@ echo "Checking for updates..."
 current_version=$(cat /opt/dnsd/bin/dnsd.sh 2> /dev/null | sha256sum)
 latest_version=$(curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh 2> /dev/null | sha256sum)
 
-if [ "${current_version}" != "${latest_version}" ]; then
+current_version_auto_update=$(cat /opt/dnsd/bin/dnsd_auto_update.sh 2> /dev/null | sha256sum)
+latest_version_auto_update=$(curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_auto_update.sh 2> /dev/null | sha256sum)
+
+if [ "${current_version}" != "${latest_version}" ] || [ "${current_version_auto_update}" != "${latest_version_auto_update}" ]; then
   echo "Updating to the latest version..."
 
   curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/bin/dnsd.sh-tmp
