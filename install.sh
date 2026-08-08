@@ -236,6 +236,8 @@ systemctl start dnsd &> "${log_redirects}"
 if [ "${auto_update}" = true ]; then
   curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_auto_update.sh > /opt/dnsd/bin/dnsd_auto_update.sh
 
+  chmod +x /opt/dnsd/bin/dnsd_auto_update.sh &> "${log_redirects}"
+
   tee /etc/systemd/system/dnsd-auto-update.service &> /dev/null << EOF
 [Unit]
 Description=DNSD auto update.
