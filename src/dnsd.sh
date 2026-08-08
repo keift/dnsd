@@ -193,7 +193,8 @@ EOF
 
     systemctl restart systemd-resolved &> /dev/null
 
-    [ "${package_manager}" = "rpm-ostree" ] && rpm-ostree apply-live &> /dev/null
+    systemctl disable dnscrypt-proxy &> /dev/null
+    systemctl stop dnscrypt-proxy &> /dev/null
   elif [ "${switch}" = "dnscrypt" ]; then
     tee /etc/systemd/resolved.conf &> /dev/null <<< ""
 
@@ -235,7 +236,7 @@ EOF
 
         dnscrypt_config="/etc/dnscrypt-proxy/dnscrypt-proxy.toml"
       else
-        echo "\"dnscrypt-proxy\" config file was not found."
+        echo "Switching has been cancelled."
 
         sleep 10
 
@@ -294,7 +295,8 @@ EOF
 
     systemctl restart systemd-resolved &> /dev/null
 
-    [ "${package_manager}" = "rpm-ostree" ] && rpm-ostree apply-live &> /dev/null
+    systemctl disable dnscrypt-proxy &> /dev/null
+    systemctl stop dnscrypt-proxy &> /dev/null
   fi
 
   strategy="${switch}"
