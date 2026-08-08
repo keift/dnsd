@@ -101,7 +101,7 @@ if ! command -v systemctl &> /dev/null; then
 fi
 
 # Auto-update
-curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/bin/dnsd.sh &> /dev/null
+curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/bin/dnsd.sh
 
 install_package systemd-resolved
 
