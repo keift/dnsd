@@ -141,7 +141,7 @@ else
 fi
 
 check() {
-  if dig -p 853 +tls +tries=1 +time=1 @one.one.one.one &> /dev/null; then
+  if dig -p 853 +tls +tries=1 +time=1 @1.1.1.1 &> /dev/null; then
     local switch="dns_over_tls"
   else
     local switch="dnscrypt"
