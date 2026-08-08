@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+auto_update=false
 debug=false
 
 for arg in "${@}"; do
+  [ "${arg}" = "--auto-update" ] && auto_update=true
   [ "${arg}" = "--debug" ] && debug=true
 done
 
@@ -216,6 +218,44 @@ systemctl stop dnsd &> "${log_redirects}"
 
 systemctl enable dnsd &> "${log_redirects}"
 systemctl start dnsd &> "${log_redirects}"
+
+if [ "${auto_update}" = true ]; then
+  curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_auto_update.sh > /opt/dnsd/bin/dnsd_auto_update.sh
+
+  tee /etc/systemd/system/dnsd-auto-update.service &> /dev/null << EOF
+[Unit]
+Description=DNSD auto update.
+After=dnsd.service
+
+[Service]
+Type=simple
+ExecStart=/opt/dnsd/bin/dnsd_auto_update.sh
+EOF
+
+  tee /etc/systemd/system/dnsd-auto-update.timer &> /dev/null << EOF
+[Unit]
+Description=DNSD auto update.
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
+
+  systemctl disable dnsd-auto-update &> "${log_redirects}"
+  systemctl stop dnsd-auto-update &> "${log_redirects}"
+
+  systemctl disable dnsd-auto-update.timer &> "${log_redirects}"
+  systemctl stop dnsd-auto-update.timer &> "${log_redirects}"
+
+  systemctl enable dnsd-auto-update &> "${log_redirects}"
+  systemctl start dnsd-auto-update &> "${log_redirects}"
+
+  systemctl enable dnsd-auto-update.timer &> "${log_redirects}"
+  systemctl start dnsd-auto-update.timer &> "${log_redirects}"
+fi
 
 echo -e "  ${legible}DNSD was successfully installed.${reset}"
 

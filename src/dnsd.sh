@@ -100,27 +100,6 @@ if ! command -v systemctl &> /dev/null; then
   exit 1
 fi
 
-timeout 10 bash -c "while ! ping -c 1 1.1.1.1 &> /dev/null; do sleep 1; done"
-
-current_version=$(cat /opt/dnsd/bin/dnsd.sh 2> /dev/null | sha256sum)
-latest_version=$(curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh 2> /dev/null | sha256sum)
-
-if [ "${current_version}" != "${latest_version}" ]; then
-  echo "Updating to the latest version..."
-
-  latest=$(curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh 2> /dev/null)
-
-  if echo "${latest}" | grep -iq "/usr/bin/env bash"; then
-    echo "${latest}" > /opt/dnsd/bin/dnsd.sh
-
-    echo "Updated successfully."
-
-    systemctl restart dnsd &> /dev/null
-  else
-    echo "Update cancelled."
-  fi
-fi
-
 install_package systemd-resolved
 
 [ "${package_manager}" = "rpm-ostree" ] && rpm-ostree apply-live &> /dev/null
