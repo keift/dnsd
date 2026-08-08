@@ -100,7 +100,7 @@ if ! command -v systemctl &> /dev/null; then
   exit 1
 fi
 
-while ! ping -c 1 -W 10 1.1.1.1 &> /dev/null; do sleep 1; done
+timeout 10 bash -c "while ! ping -c 1 1.1.1.1 &> /dev/null; do sleep 1; done"
 
 current_version=$(cat /opt/dnsd/bin/dnsd.sh 2> /dev/null | sha256sum)
 latest_version=$(curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh 2> /dev/null | sha256sum)
