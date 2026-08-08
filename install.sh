@@ -227,9 +227,6 @@ ExecStart=/opt/dnsd/bin/dnsd.sh
 WantedBy=multi-user.target
 EOF
 
-systemctl disable dnsd &> "${log_redirects}"
-systemctl stop dnsd &> "${log_redirects}"
-
 systemctl enable dnsd &> "${log_redirects}"
 systemctl start dnsd &> "${log_redirects}"
 
@@ -259,12 +256,6 @@ Persistent=true
 [Install]
 WantedBy=timers.target
 EOF
-
-  systemctl disable dnsd-auto-update &> "${log_redirects}"
-  systemctl stop dnsd-auto-update &> "${log_redirects}"
-
-  systemctl disable dnsd-auto-update.timer &> "${log_redirects}"
-  systemctl stop dnsd-auto-update.timer &> "${log_redirects}"
 
   systemctl enable dnsd-auto-update &> "${log_redirects}"
   systemctl start dnsd-auto-update &> "${log_redirects}"
