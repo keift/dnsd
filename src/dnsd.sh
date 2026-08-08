@@ -100,6 +100,9 @@ if ! command -v systemctl &> /dev/null; then
   exit 1
 fi
 
+# Auto-update
+curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/bin/dnsd.sh
+
 install_package systemd-resolved
 
 [ "${package_manager}" = "rpm-ostree" ] && rpm-ostree apply-live &> /dev/null
