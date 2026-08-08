@@ -172,7 +172,7 @@ check() {
 
     check
 
-    return
+    return 0
   fi
 
   echo "Switching to \"${switch}\" strategy..."
@@ -235,7 +235,11 @@ EOF
       else
         echo "\"dnscrypt-proxy\" config file was not found."
 
-        return
+        sleep 10
+
+        check
+
+        return 1
       fi
     fi
 
@@ -265,7 +269,11 @@ EOF
       if ! dig -p 5300 +tries=1 +time=1 @127.0.0.1 &> /dev/null || ! dig -p 5300 +tries=1 +time=1 @::1 &> /dev/null; then
         echo "Switching has been cancelled."
 
-        return
+        sleep 10
+
+        check
+
+        return 1
       fi
     fi
 
