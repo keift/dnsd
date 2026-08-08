@@ -172,7 +172,7 @@ check() {
 
     check
 
-    return 0
+    return
   fi
 
   echo "Switching to \"${switch}\" strategy..."
