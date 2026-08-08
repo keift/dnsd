@@ -127,11 +127,11 @@ else
   echo "Strategy \"${strategy}\" is currently being used."
 fi
 
-check() {
+while true; do
   if dig -p 853 +tls +tries=1 +time=1 @1.1.1.1 &> /dev/null; then
-    local switch="dns_over_tls"
+    switch="dns_over_tls"
   else
-    local switch="dnscrypt"
+    switch="dnscrypt"
   fi
 
   if [ "${strategy}" = "dnscrypt" ] && (! dig -p 5300 +tries=1 +time=1 @127.0.0.1 &> /dev/null && ! dig -p 5300 +tries=1 +time=1 @::1 &> /dev/null); then
@@ -140,7 +140,7 @@ check() {
     sleep 10
 
     if ! dig -p 5300 +tries=1 +time=1 @127.0.0.1 &> /dev/null && ! dig -p 5300 +tries=1 +time=1 @::1 &> /dev/null; then
-      local switch="local"
+      switch="local"
     fi
   fi
 
@@ -150,16 +150,14 @@ check() {
     sleep 10
 
     if ! dig -p 53 +tries=1 +time=1 @127.0.0.53 &> /dev/null || [ -z "$(dig -p 53 +tries=1 +time=1 +short @127.0.0.53)" ]; then
-      local switch="local"
+      switch="local"
     fi
   fi
 
   if [ "${strategy}" = "${switch}" ]; then
     sleep 10
 
-    check
-
-    return 0
+    continue
   fi
 
   echo "Switching to \"${switch}\" strategy..."
@@ -225,9 +223,7 @@ EOF
 
         sleep 10
 
-        check
-
-        return 1
+        continue
       fi
     fi
 
@@ -259,9 +255,7 @@ EOF
 
         sleep 10
 
-        check
-
-        return 1
+        continue
       fi
     fi
 
@@ -291,8 +285,4 @@ EOF
   echo "Successfully switched to \"${switch}\" strategy."
 
   sleep 10
-
-  check
-}
-
-check
+done
