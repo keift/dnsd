@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-update=false
+updates=false
 debug=false
 
 for arg in "${@}"; do
-  [ "${arg}" = "--update" ] && update=true
+  [ "${arg}" = "--updates" ] && updates=true
   [ "${arg}" = "--debug" ] && debug=true
 done
 
@@ -230,7 +230,7 @@ EOF
 systemctl enable dnsd &> "${log_redirects}"
 systemctl start dnsd &> "${log_redirects}"
 
-if [ "${update}" = true ]; then
+if [ "${updates}" = true ]; then
   curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_update.sh > /opt/dnsd/bin/dnsd_update.sh
 
   chmod +x /opt/dnsd/bin/dnsd_update.sh &> "${log_redirects}"

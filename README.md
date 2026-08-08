@@ -22,12 +22,12 @@ curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/uninstall.sh | sudo
 
 Installation settings can be changed in the following ways.
 
-> | Parameter  | Default | Description                                                           |
-> | ---------- | ------- | --------------------------------------------------------------------- |
-> | `--update` | `false` | This parameter indicates that it needs to update itself continuously. |
+> | Parameter   | Default | Description                                                           |
+> | ----------- | ------- | --------------------------------------------------------------------- |
+> | `--updates` | `false` | This parameter indicates that it needs to update itself continuously. |
 >
 > Example:
 >
 > ```shell
-> curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/install.sh | sudo bash -s -- --update
+> curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/install.sh | sudo bash -s -- --updates
 > ```
