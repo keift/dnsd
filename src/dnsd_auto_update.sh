@@ -23,7 +23,9 @@ if [ "${current_version}" != "${latest_version}" ]; then
     echo "Updated successfully."
 
     systemctl restart dnsd &> /dev/null
+
     systemctl restart dnsd-auto-update &> /dev/null
+    systemctl restart dnsd-auto-update.timer &> /dev/null
   else
     rm -f /opt/dnsd/bin/dnsd.sh-tmp
     rm -f /opt/dnsd/bin/dnsd_auto_update.sh-tmp
