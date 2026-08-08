@@ -27,8 +27,8 @@ if [ "${current_version}" != "${latest_version}" ]; then
     systemctl restart dnsd-auto-update &> /dev/null
     systemctl restart dnsd-auto-update.timer &> /dev/null
   else
-    rm -f /opt/dnsd/bin/dnsd.sh-tmp
-    rm -f /opt/dnsd/bin/dnsd_auto_update.sh-tmp
+    rm -rf /opt/dnsd/bin/dnsd.sh-tmp
+    rm -rf /opt/dnsd/bin/dnsd_auto_update.sh-tmp
 
     echo "Update cancelled."
   fi
