@@ -191,8 +191,6 @@ EOF
 
     systemctl restart systemd-resolved &> /dev/null
 
-    uninstall_package dnscrypt-proxy
-
     [ "${package_manager}" = "rpm-ostree" ] && rpm-ostree apply-live &> /dev/null
   elif [ "${switch}" = "dnscrypt" ]; then
     tee /etc/systemd/resolved.conf &> /dev/null <<< ""
@@ -236,6 +234,8 @@ EOF
         dnscrypt_config="/etc/dnscrypt-proxy/dnscrypt-proxy.toml"
       else
         echo "\"dnscrypt-proxy\" config file was not found."
+
+        return 1
       fi
     fi
 
@@ -257,6 +257,18 @@ EOF
 
     systemctl restart dnscrypt-proxy &> /dev/null
 
+    if ! dig -p 5300 +tries=1 +time=1 @127.0.0.1 &> /dev/null || ! dig -p 5300 +tries=1 +time=1 @::1 &> /dev/null; then
+      systemctl restart dnscrypt-proxy &> /dev/null
+
+      sleep 10
+
+      if ! dig -p 5300 +tries=1 +time=1 @127.0.0.1 &> /dev/null || ! dig -p 5300 +tries=1 +time=1 @::1 &> /dev/null; then
+        echo "Switching has been cancelled."
+
+        return 1
+      fi
+    fi
+
     tee /etc/systemd/resolved.conf &> /dev/null << EOF
 [Resolve]
 DNS=127.0.0.1:5300
@@ -271,8 +283,6 @@ EOF
     tee /etc/systemd/resolved.conf &> /dev/null <<< ""
 
     systemctl restart systemd-resolved &> /dev/null
-
-    uninstall_package dnscrypt-proxy
 
     [ "${package_manager}" = "rpm-ostree" ] && rpm-ostree apply-live &> /dev/null
   fi
