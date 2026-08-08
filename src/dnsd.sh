@@ -114,6 +114,8 @@ if [ "${current_version}" != "${latest_version}" ]; then
     echo "Updated successfully."
 
     systemctl restart dnsd &> /dev/null
+  else
+    echo "Update cancelled."
   fi
 fi
 
