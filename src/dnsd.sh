@@ -235,7 +235,7 @@ EOF
       else
         echo "\"dnscrypt-proxy\" config file was not found."
 
-        return 1
+        return
       fi
     fi
 
@@ -265,7 +265,7 @@ EOF
       if ! dig -p 5300 +tries=1 +time=1 @127.0.0.1 &> /dev/null || ! dig -p 5300 +tries=1 +time=1 @::1 &> /dev/null; then
         echo "Switching has been cancelled."
 
-        return 1
+        return
       fi
     fi
 
