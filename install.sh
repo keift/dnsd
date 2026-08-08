@@ -197,10 +197,10 @@ echo -e "  ${legible}Downloading DNSD...${reset}"
 
 rm -rf /opt/dnsd &> "${log_redirects}"
 
-rm -rf /etc/systemd/system/dnsd.service &> "${log_redirects}"
+rm -f /etc/systemd/system/dnsd.service &> "${log_redirects}"
 
-rm -rf /etc/systemd/system/dnsd-update.service &> "${log_redirects}"
-rm -rf /etc/systemd/system/dnsd-update.timer &> "${log_redirects}"
+rm -f /etc/systemd/system/dnsd-update.service &> "${log_redirects}"
+rm -f /etc/systemd/system/dnsd-update.timer &> "${log_redirects}"
 
 systemctl disable dnsd &> "${log_redirects}"
 systemctl stop dnsd &> "${log_redirects}"

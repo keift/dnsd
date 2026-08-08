@@ -19,7 +19,7 @@ if [ "${current_version}" != "${latest_version}" ] || [ "${current_version_updat
   chmod +x /opt/dnsd/bin/dnsd.sh-tmp
   chmod +x /opt/dnsd/bin/dnsd_update.sh-tmp
 
-  if cat /opt/dnsd/bin/dnsd.sh-tmp | bash -n &> /dev/null && cat /opt/dnsd/bin/dnsd_update.sh-tmp | bash -n &> /dev/null; then
+  if bash -n /opt/dnsd/bin/dnsd.sh-tmp &> /dev/null && bash -n /opt/dnsd/bin/dnsd_update.sh-tmp &> /dev/null; then
     mv /opt/dnsd/bin/dnsd.sh-tmp /opt/dnsd/bin/dnsd.sh
     mv /opt/dnsd/bin/dnsd_update.sh-tmp /opt/dnsd/bin/dnsd_update.sh
 
