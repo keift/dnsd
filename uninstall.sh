@@ -207,17 +207,17 @@ rm -rf /opt/dnsd &> "${log_redirects}"
 
 rm -rf /etc/systemd/system/dnsd.service &> "${log_redirects}"
 
-rm -rf /etc/systemd/system/dnsd-auto-update.service &> "${log_redirects}"
-rm -rf /etc/systemd/system/dnsd-auto-update.timer &> "${log_redirects}"
+rm -rf /etc/systemd/system/dnsd-update.service &> "${log_redirects}"
+rm -rf /etc/systemd/system/dnsd-update.timer &> "${log_redirects}"
 
 systemctl disable dnsd &> "${log_redirects}"
 systemctl stop dnsd &> "${log_redirects}"
 
-systemctl disable dnsd-auto-update &> "${log_redirects}"
-systemctl stop dnsd-auto-update &> "${log_redirects}"
+systemctl disable dnsd-update &> "${log_redirects}"
+systemctl stop dnsd-update &> "${log_redirects}"
 
-systemctl disable dnsd-auto-update.timer &> "${log_redirects}"
-systemctl stop dnsd-auto-update.timer &> "${log_redirects}"
+systemctl disable dnsd-update.timer &> "${log_redirects}"
+systemctl stop dnsd-update.timer &> "${log_redirects}"
 
 echo -e "  ${legible}DNSD has been successfully uninstalled.${reset}"
 
