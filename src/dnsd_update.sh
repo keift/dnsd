@@ -2,6 +2,43 @@
 
 timeout 10 bash -c "while ! ping -c 1 1.1.1.1 &> /dev/null; do sleep 1; done"
 
+echo "Updating services..."
+
+tee /etc/systemd/system/dnsd.service &> /dev/null << EOF
+[Unit]
+Description=Maintain your systemd-resolved.
+After=systemd-resolved.service
+
+[Service]
+Type=simple
+ExecStart=/opt/dnsd/bin/dnsd.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+tee /etc/systemd/system/dnsd-update.service &> /dev/null << EOF
+[Unit]
+Description=DNSD update.
+After=dnsd.service
+
+[Service]
+Type=simple
+ExecStart=/opt/dnsd/bin/dnsd_update.sh
+EOF
+
+tee /etc/systemd/system/dnsd-update.timer &> /dev/null << EOF
+[Unit]
+Description=DNSD update.
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
+
 echo "Checking for updates..."
 
 current_version=$(cat /opt/dnsd/bin/dnsd.sh 2> /dev/null | sha256sum)
