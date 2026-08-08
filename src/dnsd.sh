@@ -100,6 +100,12 @@ if ! command -v systemctl &> /dev/null; then
   exit 1
 fi
 
+! command -v dig &> /dev/null && install_package bind-tools
+! command -v dig &> /dev/null && install_package bind-utils
+! command -v dig &> /dev/null && install_package bind9-dnsutils
+! command -v dig &> /dev/null && install_package bind
+
+install_package curl
 install_package systemd-resolved
 
 [ "${package_manager}" = "rpm-ostree" ] && rpm-ostree apply-live &> /dev/null
