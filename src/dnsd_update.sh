@@ -40,12 +40,16 @@ EOF
 echo "Checking for updates..."
 
 if ! curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/bin/dnsd.sh-tmp 2> /dev/null; then
+  rm -f /opt/dnsd/bin/dnsd.sh-tmp
+
   echo "Something went wrong."
 
   exit 1
 fi
 
 if ! curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_update.sh > /opt/dnsd/bin/dnsd_update.sh-tmp 2> /dev/null; then
+  rm -f /opt/dnsd/bin/dnsd_update.sh-tmp
+
   echo "Something went wrong."
 
   exit 1
