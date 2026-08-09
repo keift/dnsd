@@ -1,25 +1,50 @@
 #!/usr/bin/env bash
 
-timeout 10 bash -c "while ! ping -c 1 1.1.1.1 &> /dev/null; do sleep 1; done"
+tee /etc/systemd/system/dnsd.service &> /dev/null << EOF
+[Unit]
+Description=Maintain your systemd-resolved.
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/opt/dnsd/bin/dnsd.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+tee /etc/systemd/system/dnsd-update.service &> /dev/null << EOF
+[Unit]
+Description=DNSD update.
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/dnsd/bin/dnsd_update.sh
+EOF
+
+tee /etc/systemd/system/dnsd-update.timer &> /dev/null << EOF
+[Unit]
+Description=DNSD update.
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
 
 echo "Checking for updates..."
 
 if ! curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/bin/dnsd.sh-tmp 2> /dev/null; then
   echo "Something went wrong."
 
-  sleep 10
-
-  systemctl restart dnsd-update &> /dev/null
-
   exit 1
 fi
 
 if ! curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_update.sh > /opt/dnsd/bin/dnsd_update.sh-tmp 2> /dev/null; then
   echo "Something went wrong."
-
-  sleep 10
-
-  systemctl restart dnsd-update &> /dev/null
 
   exit 1
 fi
@@ -41,9 +66,12 @@ if [ "${current_version}" != "${latest_version}" ] || [ "${current_version_updat
     mv /opt/dnsd/bin/dnsd.sh-tmp /opt/dnsd/bin/dnsd.sh &> /dev/null
     mv /opt/dnsd/bin/dnsd_update.sh-tmp /opt/dnsd/bin/dnsd_update.sh &> /dev/null
 
+    echo "Updated successfully."
+
     systemctl restart dnsd &> /dev/null
 
-    echo "Updated successfully."
+    systemctl restart dnsd-update &> /dev/null
+    systemctl restart dnsd-update.timer &> /dev/null
   else
     rm -f /opt/dnsd/bin/dnsd.sh-tmp &> /dev/null
     rm -f /opt/dnsd/bin/dnsd_update.sh-tmp &> /dev/null
@@ -56,38 +84,3 @@ else
 
   echo "No updates found."
 fi
-
-tee /etc/systemd/system/dnsd.service &> /dev/null << EOF
-[Unit]
-Description=Maintain your systemd-resolved.
-After=systemd-resolved.service
-
-[Service]
-Type=simple
-ExecStart=/opt/dnsd/bin/dnsd.sh
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-tee /etc/systemd/system/dnsd-update.service &> /dev/null << EOF
-[Unit]
-Description=DNSD update.
-After=dnsd.service
-
-[Service]
-Type=simple
-ExecStart=/opt/dnsd/bin/dnsd_update.sh
-EOF
-
-tee /etc/systemd/system/dnsd-update.timer &> /dev/null << EOF
-[Unit]
-Description=DNSD update.
-
-[Timer]
-OnCalendar=daily
-Persistent=true
-
-[Install]
-WantedBy=timers.target
-EOF

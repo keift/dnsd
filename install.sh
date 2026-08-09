@@ -222,7 +222,7 @@ echo -e "  ${legible}Installing DNSD...${reset}"
 tee /etc/systemd/system/dnsd.service &> /dev/null << EOF
 [Unit]
 Description=Maintain your systemd-resolved.
-After=systemd-resolved.service
+After=network-online.target
 
 [Service]
 Type=simple
@@ -243,10 +243,10 @@ if [ "${updates}" = true ]; then
   tee /etc/systemd/system/dnsd-update.service &> /dev/null << EOF
 [Unit]
 Description=DNSD update.
-After=dnsd.service
+After=network-online.target
 
 [Service]
-Type=simple
+Type=oneshot
 ExecStart=/opt/dnsd/bin/dnsd_update.sh
 EOF
 
