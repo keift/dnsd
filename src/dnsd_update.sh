@@ -4,6 +4,7 @@ tee /etc/systemd/system/dnsd.service &> /dev/null << EOF
 [Unit]
 Description=Maintain your systemd-resolved.
 After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=simple
@@ -17,6 +18,7 @@ tee /etc/systemd/system/dnsd-update.service &> /dev/null << EOF
 [Unit]
 Description=DNSD update.
 After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=oneshot
