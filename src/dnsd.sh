@@ -94,6 +94,8 @@ uninstall_package() {
   fi
 }
 
+echo test
+
 if ! command -v systemctl &> /dev/null; then
   echo "It only works on Systemd devices."
 
