@@ -4,38 +4,56 @@ timeout 10 bash -c "while ! ping -c 1 1.1.1.1 &> /dev/null; do sleep 1; done"
 
 echo "Checking for updates..."
 
-current_version=$(cat /opt/dnsd/bin/dnsd.sh 2> /dev/null | sha256sum)
-latest_version=$(curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh 2> /dev/null | sha256sum)
+if ! curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/bin/dnsd.sh-tmp 2> /dev/null; then
+  echo "Something went wrong."
 
-current_version_update=$(cat /opt/dnsd/bin/dnsd_update.sh 2> /dev/null | sha256sum)
-latest_version_update=$(curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_update.sh 2> /dev/null | sha256sum)
+  sleep 10
+
+  systemctl restart dnsd-update &> /dev/null
+
+  exit 1
+fi
+
+if ! curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_update.sh > /opt/dnsd/bin/dnsd_update.sh-tmp 2> /dev/null; then
+  echo "Something went wrong."
+
+  sleep 10
+
+  systemctl restart dnsd-update &> /dev/null
+
+  exit 1
+fi
+
+current_version=$(sha256sum /opt/dnsd/bin/dnsd.sh 2> /dev/null | cut -f1 -d " ")
+latest_version=$(sha256sum /opt/dnsd/bin/dnsd.sh-tmp 2> /dev/null | cut -f1 -d " ")
+
+current_version_update=$(sha256sum /opt/dnsd/bin/dnsd_update.sh 2> /dev/null | cut -f1 -d " ")
+latest_version_update=$(sha256sum /opt/dnsd/bin/dnsd_update.sh-tmp 2> /dev/null | cut -f1 -d " ")
 
 if [ "${current_version}" != "${latest_version}" ] || [ "${current_version_update}" != "${latest_version_update}" ]; then
   echo "Updating to the latest version..."
 
-  curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/bin/dnsd.sh-tmp
-  curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_update.sh > /opt/dnsd/bin/dnsd_update.sh-tmp
+  chmod +x /opt/dnsd/bin/dnsd.sh-tmp &> /dev/null
+  chmod +x /opt/dnsd/bin/dnsd_update.sh-tmp &> /dev/null
 
-  chmod +x /opt/dnsd/bin/dnsd.sh-tmp
-  chmod +x /opt/dnsd/bin/dnsd_update.sh-tmp
-
-  if bash -n /opt/dnsd/bin/dnsd.sh-tmp &> /dev/null && bash -n /opt/dnsd/bin/dnsd_update.sh-tmp &> /dev/null; then
-    mv /opt/dnsd/bin/dnsd.sh-tmp /opt/dnsd/bin/dnsd.sh
-    mv /opt/dnsd/bin/dnsd_update.sh-tmp /opt/dnsd/bin/dnsd_update.sh
-
-    echo "Updated successfully."
+  if bash -n /opt/dnsd/bin/dnsd.sh-tmp &> /dev/null \
+    && bash -n /opt/dnsd/bin/dnsd_update.sh-tmp &> /dev/null; then
+    mv /opt/dnsd/bin/dnsd.sh-tmp /opt/dnsd/bin/dnsd.sh &> /dev/null
+    mv /opt/dnsd/bin/dnsd_update.sh-tmp /opt/dnsd/bin/dnsd_update.sh &> /dev/null
 
     systemctl restart dnsd &> /dev/null
 
-    systemctl restart dnsd-update &> /dev/null
-    systemctl restart dnsd-update.timer &> /dev/null
+    echo "Updated successfully."
   else
-    rm -f /opt/dnsd/bin/dnsd.sh-tmp
-    rm -f /opt/dnsd/bin/dnsd_update.sh-tmp
+    rm -f /opt/dnsd/bin/dnsd.sh-tmp &> /dev/null
+    rm -f /opt/dnsd/bin/dnsd_update.sh-tmp &> /dev/null
 
     echo "Update cancelled."
   fi
 else
+  rm -f /opt/dnsd/bin/dnsd.sh-tmp &> /dev/null
+  rm -f /opt/dnsd/bin/dnsd_update.sh-tmp &> /dev/null
+
   echo "No updates found."
 fi
 
