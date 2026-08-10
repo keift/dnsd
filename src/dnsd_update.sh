@@ -2,7 +2,7 @@
 
 tee /etc/systemd/system/dnsd.service &> /dev/null << EOF
 [Unit]
-Description=Maintain your systemd-resolved.
+Description=Maintain your systemd-resolved
 After=network-online.target
 Wants=network-online.target
 
@@ -16,7 +16,7 @@ EOF
 
 tee /etc/systemd/system/dnsd-update.service &> /dev/null << EOF
 [Unit]
-Description=DNSD update.
+Description=DNSD update
 After=network-online.target
 Wants=network-online.target
 
@@ -27,7 +27,7 @@ EOF
 
 tee /etc/systemd/system/dnsd-update.timer &> /dev/null << EOF
 [Unit]
-Description=DNSD update.
+Description=DNSD update
 
 [Timer]
 OnCalendar=daily
