@@ -37,6 +37,8 @@ Persistent=true
 WantedBy=timers.target
 EOF
 
+while ! curl -sI --max-time 10 https://raw.github.com &> /dev/null; do sleep 1; done
+
 echo "Checking for updates..."
 
 if ! curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/bin/dnsd.sh-tmp 2> /dev/null; then
