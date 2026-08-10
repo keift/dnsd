@@ -145,7 +145,7 @@ if [ "${current_version}" != "${latest_version}" ] || [ "${current_version_updat
     rm -f /opt/dnsd/bin/dnsd.sh-tmp &> /dev/null
     rm -f /opt/dnsd/bin/dnsd_update.sh-tmp &> /dev/null
 
-    echo "Update cancelled."
+    echo "Something went wrong."
   fi
 else
   rm -f /opt/dnsd/bin/dnsd.sh-tmp &> /dev/null
