@@ -190,3 +190,5 @@ Persistent=true
 [Install]
 WantedBy=timers.target
 EOF
+
+systemctl daemon-reload &> /dev/null
