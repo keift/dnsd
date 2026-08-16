@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-while ! curl -sI --max-time 10 https://raw.github.com &> /dev/null; do sleep 1; done
+while ! curl -sI --max-time 10 https://raw.github.com &> /dev/null; do sleep 10; done
 
 echo "Checking for updates..."
 
