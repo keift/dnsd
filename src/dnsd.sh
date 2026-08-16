@@ -164,6 +164,14 @@ while true; do
 
   echo "Switching to \"${switch}\" strategy..."
 
+  tee /etc/systemd/resolved.conf &> /dev/null <<< ""
+
+  systemctl restart systemd-resolved &> /dev/null
+
+  strategy="local"
+
+  echo "${strategy}" > /opt/dnsd/cache/strategy
+
   if [ "${switch}" = "dns_over_tls" ]; then
     tee /etc/systemd/resolved.conf &> /dev/null << EOF
 [Resolve]
@@ -181,14 +189,6 @@ EOF
     systemctl disable dnscrypt-proxy &> /dev/null
     systemctl stop dnscrypt-proxy &> /dev/null
   elif [ "${switch}" = "dnscrypt" ]; then
-    tee /etc/systemd/resolved.conf &> /dev/null <<< ""
-
-    systemctl restart systemd-resolved &> /dev/null
-
-    strategy="local"
-
-    echo "${strategy}" > /opt/dnsd/cache/strategy
-
     install_package dnscrypt-proxy
 
     [ "${package_manager}" = "rpm-ostree" ] && rpm-ostree apply-live &> /dev/null
