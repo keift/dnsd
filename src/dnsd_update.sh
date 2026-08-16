@@ -4,16 +4,10 @@ while ! curl -sI --max-time 10 https://raw.github.com &> /dev/null; do sleep 1; 
 
 echo "Checking for updates..."
 
-if ! curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/bin/dnsd.sh-tmp 2> /dev/null; then
-  rm -f /opt/dnsd/bin/dnsd.sh-tmp
-
-  echo "Something went wrong."
-
-  exit 1
-fi
-
-if ! curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_update.sh > /opt/dnsd/bin/dnsd_update.sh-tmp 2> /dev/null; then
-  rm -f /opt/dnsd/bin/dnsd_update.sh-tmp
+if ! curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/bin/dnsd.sh-tmp 2> /dev/null \
+  || ! curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_update.sh > /opt/dnsd/bin/dnsd_update.sh-tmp 2> /dev/null; then
+  rm -f /opt/dnsd/bin/dnsd.sh-tmp &> /dev/null
+  rm -f /opt/dnsd/bin/dnsd_update.sh-tmp &> /dev/null
 
   echo "Something went wrong."
 
