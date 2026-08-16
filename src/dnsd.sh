@@ -146,12 +146,12 @@ while true; do
     fi
   fi
 
-  if [ "${strategy}" != "local" ] && (! dig -p 53 +tries=1 +time=1 @127.0.0.53 &> /dev/null || [ -z "$(dig -p 53 +tries=1 +time=1 +short @127.0.0.53)" ]); then
+  if [ "${strategy}" != "local" ] && (! dig -p 53 +tries=1 +time=1 @127.0.0.53 &> /dev/null || [ -z "$(dig -p 53 +short +tries=1 +time=1 @127.0.0.53)" ]); then
     systemctl restart systemd-resolved &> /dev/null
 
     sleep 10
 
-    if ! dig -p 53 +tries=1 +time=1 @127.0.0.53 &> /dev/null || [ -z "$(dig -p 53 +tries=1 +time=1 +short @127.0.0.53)" ]; then
+    if ! dig -p 53 +tries=1 +time=1 @127.0.0.53 &> /dev/null || [ -z "$(dig -p 53 +short +tries=1 +time=1 @127.0.0.53)" ]; then
       switch="local"
     fi
   fi
