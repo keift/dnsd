@@ -164,13 +164,13 @@ while true; do
 
   echo "Switching to \"${switch}\" strategy..."
 
-  tee /etc/systemd/resolved.conf &> /dev/null <<< ""
-
-  systemctl restart systemd-resolved &> /dev/null
-
   strategy="local"
 
   echo "${strategy}" > /opt/dnsd/cache/strategy
+
+  tee /etc/systemd/resolved.conf &> /dev/null <<< ""
+
+  systemctl restart systemd-resolved &> /dev/null
 
   if [ "${switch}" = "dns_over_tls" ]; then
     tee /etc/systemd/resolved.conf &> /dev/null << EOF
