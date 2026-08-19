@@ -157,7 +157,7 @@ while true; do
   fi
 
   if [ "${strategy}" = "${switch}" ]; then
-    sleep 10
+    sleep 60
 
     continue
   fi
