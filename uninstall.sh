@@ -91,8 +91,6 @@ install_package() {
   elif [ "${package_manager}" = "opkg" ]; then
     opkg install "${package_name}" &> "${log_redirects}"
   else
-    print_head
-
     echo -e "  ${red}Unsupported package manager.${reset}"
 
     echo ""
@@ -127,8 +125,6 @@ uninstall_package() {
   elif [ "${package_manager}" = "opkg" ]; then
     opkg remove "${package_name}" &> "${log_redirects}"
   else
-    print_head
-
     echo -e "  ${red}Unsupported package manager.${reset}"
 
     echo ""
@@ -137,27 +133,21 @@ uninstall_package() {
   fi
 }
 
-print_head() {
-  clear
+clear
 
-  echo ""
+echo ""
 
-  if [ -n "${last_commit_id}" ]; then
-    local version_text="${gray}v${version} (${last_commit_id})"
-  else
-    local version_text="${gray}v${version}"
-  fi
+if [ -n "${last_commit_id}" ]; then
+  version_text="${gray}v${version} (${last_commit_id})"
+else
+  version_text="${gray}v${version}"
+fi
 
-  echo -e "  ${blue}Keift ${cyan}Uninstall DNSD ${version_text}${reset}"
+echo -e "  ${blue}Keift ${cyan}Uninstall DNSD ${version_text}${reset}"
 
-  echo ""
-}
-
-print_head
+echo ""
 
 if ! command -v systemctl &> /dev/null; then
-  print_head
-
   echo -e "  ${red}It only works on Systemd devices.${reset}"
 
   echo ""
@@ -166,8 +156,6 @@ if ! command -v systemctl &> /dev/null; then
 fi
 
 if [ "${EUID}" != "0" ]; then
-  print_head
-
   echo -e "  ${red}Missing permissions. Try running it with the following command.${reset}"
 
   echo ""
