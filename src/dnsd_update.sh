@@ -31,6 +31,8 @@ if [ "${current_version}" != "${latest_version}" ] || [ "${current_version_updat
     mv /opt/dnsd/bin/dnsd.sh-tmp /opt/dnsd/bin/dnsd.sh &> /dev/null
     mv /opt/dnsd/bin/dnsd_update.sh-tmp /opt/dnsd/bin/dnsd_update.sh &> /dev/null
 
+    rm -rf /opt/dnsd/cache &> /dev/null
+
     echo "Updated successfully."
 
     systemctl restart dnsd &> /dev/null
