@@ -201,7 +201,7 @@ systemctl stop dnsd-update.timer &> "${log_redirects}"
 
 mkdir -p /opt/dnsd/bin &> "${log_redirects}"
 
-curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/bin/dnsd.sh
+curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/bin/dnsd.sh 2> "${log_redirects}"
 
 chmod +x /opt/dnsd/bin/dnsd.sh &> "${log_redirects}"
 
@@ -225,7 +225,7 @@ systemctl enable dnsd &> "${log_redirects}"
 systemctl start dnsd &> "${log_redirects}"
 
 if [ "${updates}" = true ]; then
-  curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_update.sh > /opt/dnsd/bin/dnsd_update.sh
+  curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_update.sh > /opt/dnsd/bin/dnsd_update.sh 2> "${log_redirects}"
 
   chmod +x /opt/dnsd/bin/dnsd_update.sh &> "${log_redirects}"
 

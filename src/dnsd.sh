@@ -166,7 +166,7 @@ while true; do
 
   strategy="local"
 
-  echo "${strategy}" > /opt/dnsd/cache/strategy
+  echo "${strategy}" > /opt/dnsd/cache/strategy 2> /dev/null
 
   tee /etc/systemd/resolved.conf &> /dev/null <<< ""
 
@@ -286,7 +286,7 @@ EOF
 
   strategy="${switch}"
 
-  echo "${strategy}" > /opt/dnsd/cache/strategy
+  echo "${strategy}" > /opt/dnsd/cache/strategy 2> /dev/null
 
   echo "Successfully switched to \"${switch}\" strategy."
 
