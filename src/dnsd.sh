@@ -47,6 +47,8 @@ install_package() {
     xbps-install -y "${package_name}" &> /dev/null
   elif [ "${package_manager}" = "apk" ]; then
     apk add "${package_name}" &> /dev/null
+  elif [ "${package_manager}" = "apx" ]; then
+    apx install -y "${package_name}" &> /dev/null
   elif [ "${package_manager}" = "emerge" ]; then
     emerge "${package_name}" &> /dev/null
   elif [ "${package_manager}" = "slackpkg" ]; then
@@ -79,6 +81,8 @@ uninstall_package() {
     xbps-remove -y "${package_name}" &> /dev/null
   elif [ "${package_manager}" = "apk" ]; then
     apk del "${package_name}" &> /dev/null
+  elif [ "${package_manager}" = "apx" ]; then
+    apx remove -y "${package_name}" &> /dev/null
   elif [ "${package_manager}" = "emerge" ]; then
     emerge --unmerge "${package_name}" &> /dev/null
   elif [ "${package_manager}" = "slackpkg" ]; then
