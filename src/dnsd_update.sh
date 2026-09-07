@@ -83,6 +83,7 @@ Description=DNSD update
 
 [Timer]
 OnCalendar=daily
+RandomizedDelaySec=1h
 Persistent=true
 
 [Install]
