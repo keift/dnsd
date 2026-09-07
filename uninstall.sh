@@ -175,12 +175,12 @@ uninstall_package dnscrypt-proxy
 
 [ "${package_manager}" = "rpm-ostree" ] && rpm-ostree apply-live &> "${log_redirects}"
 
-systemctl enable systemd-resolved "${log_redirects}"
-systemctl start systemd-resolved "${log_redirects}"
+systemctl enable systemd-resolved &> "${log_redirects}"
+systemctl start systemd-resolved &> "${log_redirects}"
 
 tee /etc/systemd/resolved.conf &> /dev/null <<< ""
 
-chattr -i /etc/resolv.conf "${log_redirects}"
+chattr -i /etc/resolv.conf &> "${log_redirects}"
 
 [ -f /run/systemd/resolve/stub-resolv.conf ] && ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf &> "${log_redirects}"
 
