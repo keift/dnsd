@@ -14,11 +14,11 @@ if ! curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > 
   exit 1
 fi
 
-current_version=$(sha256sum /opt/dnsd/bin/dnsd.sh 2> /dev/null | cut -f1 -d " ")
-latest_version=$(sha256sum /opt/dnsd/bin/dnsd.sh-tmp 2> /dev/null | cut -f1 -d " ")
+current_version=$(sha256sum /opt/dnsd/bin/dnsd.sh 2> /dev/null | cut -f 1 -d " ")
+latest_version=$(sha256sum /opt/dnsd/bin/dnsd.sh-tmp 2> /dev/null | cut -f 1 -d " ")
 
-current_version_update=$(sha256sum /opt/dnsd/bin/dnsd_update.sh 2> /dev/null | cut -f1 -d " ")
-latest_version_update=$(sha256sum /opt/dnsd/bin/dnsd_update.sh-tmp 2> /dev/null | cut -f1 -d " ")
+current_version_update=$(sha256sum /opt/dnsd/bin/dnsd_update.sh 2> /dev/null | cut -f 1 -d " ")
+latest_version_update=$(sha256sum /opt/dnsd/bin/dnsd_update.sh-tmp 2> /dev/null | cut -f 1 -d " ")
 
 if [ "${current_version}" != "${latest_version}" ] || [ "${current_version_update}" != "${latest_version_update}" ]; then
   echo "Updating to the latest version..."
