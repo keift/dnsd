@@ -181,6 +181,15 @@ install_package systemd-resolved
 
 [ "${package_manager}" = "rpm-ostree" ] && rpm-ostree apply-live &> "${log_redirects}"
 
+systemctl enable systemd-resolved &> "${log_redirects}"
+systemctl start systemd-resolved &> "${log_redirects}"
+
+chattr -i /etc/resolv.conf &> "${log_redirects}"
+
+[ -f /run/systemd/resolve/stub-resolv.conf ] && ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf &> "${log_redirects}"
+
+systemctl restart systemd-resolved &> "${log_redirects}"
+
 echo -e "  ${legible}Downloading DNSD...${reset}"
 
 rm -rf /opt/dnsd &> "${log_redirects}"
