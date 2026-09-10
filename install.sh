@@ -171,24 +171,9 @@ fi
 
 echo -e "  ${legible}Installing dependencies...${reset}"
 
-! command -v dig &> /dev/null && install_package bind-tools
-! command -v dig &> /dev/null && install_package bind-utils
-! command -v dig &> /dev/null && install_package bind9-dnsutils
-! command -v dig &> /dev/null && install_package bind
-
 install_package curl
-install_package systemd-resolved
 
 [ "${package_manager}" = "rpm-ostree" ] && rpm-ostree apply-live &> "${log_redirects}"
-
-systemctl enable systemd-resolved &> "${log_redirects}"
-systemctl start systemd-resolved &> "${log_redirects}"
-
-chattr -i /etc/resolv.conf &> "${log_redirects}"
-
-[ -f /run/systemd/resolve/stub-resolv.conf ] && ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf &> "${log_redirects}"
-
-systemctl restart systemd-resolved &> "${log_redirects}"
 
 echo -e "  ${legible}Downloading DNSD...${reset}"
 
@@ -214,6 +199,12 @@ curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/
 
 chmod +x /opt/dnsd/bin/dnsd.sh &> "${log_redirects}"
 
+if [ "${updates}" = true ]; then
+  curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_update.sh > /opt/dnsd/bin/dnsd_update.sh 2> "${log_redirects}"
+
+  chmod +x /opt/dnsd/bin/dnsd_update.sh &> "${log_redirects}"
+fi
+
 echo -e "  ${legible}Installing DNSD...${reset}"
 
 tee /etc/systemd/system/dnsd.service &> /dev/null << EOF
@@ -234,10 +225,6 @@ systemctl enable dnsd &> "${log_redirects}"
 systemctl start dnsd &> "${log_redirects}"
 
 if [ "${updates}" = true ]; then
-  curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_update.sh > /opt/dnsd/bin/dnsd_update.sh 2> "${log_redirects}"
-
-  chmod +x /opt/dnsd/bin/dnsd_update.sh &> "${log_redirects}"
-
   tee /etc/systemd/system/dnsd-update.service &> /dev/null << EOF
 [Unit]
 Description=DNSD update
