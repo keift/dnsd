@@ -105,12 +105,16 @@ fi
 ! command -v dig &> /dev/null && install_package bind9-dnsutils
 ! command -v dig &> /dev/null && install_package bind
 
-install_package systemd-resolved
+if ! systemctl is-active -q systemd-resolved; then
+  install_package systemd-resolved
+fi
 
 [ "${package_manager}" = "rpm-ostree" ] && rpm-ostree apply-live &> /dev/null
 
-systemctl enable systemd-resolved &> /dev/null
-systemctl start systemd-resolved &> /dev/null
+if ! systemctl is-active -q systemd-resolved; then
+  systemctl enable systemd-resolved &> /dev/null
+  systemctl start systemd-resolved &> /dev/null
+fi
 
 chattr -i /etc/resolv.conf &> /dev/null
 
