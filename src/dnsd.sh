@@ -120,9 +120,9 @@ chattr -i /etc/resolv.conf &> /dev/null
 
 [ -f /run/systemd/resolve/stub-resolv.conf ] && ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf &> /dev/null
 
-mkdir -p /opt/dnsd/cache &> /dev/null
+mkdir -p /opt/dnsd/state &> /dev/null
 
-strategy=$(cat /opt/dnsd/cache/strategy 2> /dev/null || echo "none")
+strategy=$(cat /opt/dnsd/state/strategy 2> /dev/null || echo "none")
 
 if [ "${strategy}" = "none" ]; then
   echo "No strategy is currently being used."
@@ -170,7 +170,7 @@ while true; do
 
   strategy="local"
 
-  echo "${strategy}" > /opt/dnsd/cache/strategy 2> /dev/null
+  echo "${strategy}" > /opt/dnsd/state/strategy 2> /dev/null
 
   tee /etc/systemd/resolved.conf &> /dev/null <<< ""
 
@@ -290,7 +290,7 @@ EOF
 
   strategy="${switch}"
 
-  echo "${strategy}" > /opt/dnsd/cache/strategy 2> /dev/null
+  echo "${strategy}" > /opt/dnsd/state/strategy 2> /dev/null
 
   echo "Successfully switched to \"${switch}\" strategy."
 
