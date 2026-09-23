@@ -131,7 +131,10 @@ else
 fi
 
 while true; do
-  if dig -p 853 +tls +tries=1 +time=1 @one.one.one.one &> /dev/null; then
+  if dig -p 853 +tls +tries=1 +time=1 @1.1.1.1 &> /dev/null \
+    || dig -p 853 +tls +tries=1 +time=1 @2606:4700:4700::1111 &> /dev/null \
+    || dig -p 853 +tls +tries=1 +time=1 @1.0.0.1 &> /dev/null \
+    || dig -p 853 +tls +tries=1 +time=1 @2606:4700:4700::1001 &> /dev/null; then
     switch="dns_over_tls"
   else
     switch="dnscrypt"
