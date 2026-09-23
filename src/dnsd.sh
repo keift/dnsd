@@ -48,9 +48,9 @@ install_package() {
   elif [ "${package_manager}" = "apk" ]; then
     apk add "${package_name}" &> /dev/null
   elif [ "${package_manager}" = "emerge" ]; then
-    emerge "${package_name}" &> /dev/null
+    emerge --batch "${package_name}" &> /dev/null
   elif [ "${package_manager}" = "slackpkg" ]; then
-    slackpkg -batch=on -default_answer=y install "${package_name}" &> /dev/null
+    slackpkg -batch=on -default_answer=yes install "${package_name}" &> /dev/null
   elif [ "${package_manager}" = "eopkg" ]; then
     eopkg install -y "${package_name}" &> /dev/null
   elif [ "${package_manager}" = "opkg" ]; then
@@ -80,9 +80,9 @@ uninstall_package() {
   elif [ "${package_manager}" = "apk" ]; then
     apk del "${package_name}" &> /dev/null
   elif [ "${package_manager}" = "emerge" ]; then
-    emerge --unmerge "${package_name}" &> /dev/null
+    emerge --batch --unmerge "${package_name}" &> /dev/null
   elif [ "${package_manager}" = "slackpkg" ]; then
-    slackpkg -batch=on -default_answer=y remove "${package_name}" &> /dev/null
+    slackpkg -batch=on -default_answer=yes remove "${package_name}" &> /dev/null
   elif [ "${package_manager}" = "eopkg" ]; then
     eopkg remove -y "${package_name}" &> /dev/null
   elif [ "${package_manager}" = "opkg" ]; then
