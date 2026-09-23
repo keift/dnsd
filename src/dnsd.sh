@@ -179,10 +179,10 @@ while true; do
   if [ "${switch}" = "dns_over_tls" ]; then
     tee /etc/systemd/resolved.conf &> /dev/null << EOF
 [Resolve]
-DNS=1.1.1.1#one.one.one.one
-DNS=2606:4700:4700::1111#one.one.one.one
-DNS=1.0.0.1#one.one.one.one
-DNS=2606:4700:4700::1001#one.one.one.one
+DNS=1.1.1.1
+DNS=2606:4700:4700::1111
+DNS=1.0.0.1
+DNS=2606:4700:4700::1001
 
 Domains=~.
 DNSOverTLS=yes
