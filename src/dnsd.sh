@@ -131,31 +131,31 @@ else
 fi
 
 while true; do
-  if dig +tries=1 +time=1 +tls +tls-hostname=one.one.one.one @1.1.1.1 &> /dev/null \
-    || dig +tries=1 +time=1 +tls +tls-hostname=one.one.one.one @2606:4700:4700::1111 &> /dev/null \
-    || dig +tries=1 +time=1 +tls +tls-hostname=one.one.one.one @1.0.0.1 &> /dev/null \
-    || dig +tries=1 +time=1 +tls +tls-hostname=one.one.one.one @2606:4700:4700::1001 &> /dev/null; then
+  if dig +time=1 +tries=1 +tls +tls-hostname=one.one.one.one @1.1.1.1 &> /dev/null \
+    || dig +time=1 +tries=1 +tls +tls-hostname=one.one.one.one @2606:4700:4700::1111 &> /dev/null \
+    || dig +time=1 +tries=1 +tls +tls-hostname=one.one.one.one @1.0.0.1 &> /dev/null \
+    || dig +time=1 +tries=1 +tls +tls-hostname=one.one.one.one @2606:4700:4700::1001 &> /dev/null; then
     switch="dns_over_tls"
   else
     switch="dnscrypt"
   fi
 
-  if [ "${strategy}" = "dnscrypt" ] && (! dig -p 5300 +tries=1 +time=1 @127.0.0.1 &> /dev/null && ! dig -p 5300 +tries=1 +time=1 @::1 &> /dev/null); then
+  if [ "${strategy}" = "dnscrypt" ] && (! dig -p 5300 +time=1 +tries=1 @127.0.0.1 &> /dev/null && ! dig -p 5300 +time=1 +tries=1 @::1 &> /dev/null); then
     systemctl restart dnscrypt-proxy &> /dev/null
 
     sleep 10
 
-    if ! dig -p 5300 +tries=1 +time=1 @127.0.0.1 &> /dev/null && ! dig -p 5300 +tries=1 +time=1 @::1 &> /dev/null; then
+    if ! dig -p 5300 +time=1 +tries=1 @127.0.0.1 &> /dev/null && ! dig -p 5300 +time=1 +tries=1 @::1 &> /dev/null; then
       switch="local"
     fi
   fi
 
-  if [ "${strategy}" != "local" ] && (! dig +tries=1 +time=1 @127.0.0.53 &> /dev/null || [ -z "$(dig +short +tries=1 +time=1 @127.0.0.53)" ]); then
+  if [ "${strategy}" != "local" ] && (! dig +time=1 +tries=1 @127.0.0.53 &> /dev/null || [ -z "$(dig +short +time=1 +tries=1 @127.0.0.53)" ]); then
     systemctl restart systemd-resolved &> /dev/null
 
     sleep 10
 
-    if ! dig +tries=1 +time=1 @127.0.0.53 &> /dev/null || [ -z "$(dig +short +tries=1 +time=1 @127.0.0.53)" ]; then
+    if ! dig +time=1 +tries=1 @127.0.0.53 &> /dev/null || [ -z "$(dig +short +time=1 +tries=1 @127.0.0.53)" ]; then
       switch="local"
     fi
   fi
@@ -255,12 +255,12 @@ EOF
 
     systemctl restart dnscrypt-proxy &> /dev/null
 
-    if ! dig -p 5300 +tries=1 +time=1 @127.0.0.1 &> /dev/null && ! dig -p 5300 +tries=1 +time=1 @::1 &> /dev/null; then
+    if ! dig -p 5300 +time=1 +tries=1 @127.0.0.1 &> /dev/null && ! dig -p 5300 +time=1 +tries=1 @::1 &> /dev/null; then
       systemctl restart dnscrypt-proxy &> /dev/null
 
       sleep 10
 
-      if ! dig -p 5300 +tries=1 +time=1 @127.0.0.1 &> /dev/null && ! dig -p 5300 +tries=1 +time=1 @::1 &> /dev/null; then
+      if ! dig -p 5300 +time=1 +tries=1 @127.0.0.1 &> /dev/null && ! dig -p 5300 +time=1 +tries=1 @::1 &> /dev/null; then
         echo "Switching has been cancelled."
 
         sleep 10
