@@ -131,10 +131,10 @@ else
 fi
 
 while true; do
-  if dig -p 853 +tries=1 +time=1 +tls +tls-hostname=one.one.one.one @1.1.1.1 &> /dev/null \
-    || dig -p 853 +tries=1 +time=1 +tls +tls-hostname=one.one.one.one @2606:4700:4700::1111 &> /dev/null \
-    || dig -p 853 +tries=1 +time=1 +tls +tls-hostname=one.one.one.one @1.0.0.1 &> /dev/null \
-    || dig -p 853 +tries=1 +time=1 +tls +tls-hostname=one.one.one.one @2606:4700:4700::1001 &> /dev/null; then
+  if dig +tries=1 +time=1 +tls +tls-hostname=one.one.one.one @1.1.1.1 &> /dev/null \
+    || dig +tries=1 +time=1 +tls +tls-hostname=one.one.one.one @2606:4700:4700::1111 &> /dev/null \
+    || dig +tries=1 +time=1 +tls +tls-hostname=one.one.one.one @1.0.0.1 &> /dev/null \
+    || dig +tries=1 +time=1 +tls +tls-hostname=one.one.one.one @2606:4700:4700::1001 &> /dev/null; then
     switch="dns_over_tls"
   else
     switch="dnscrypt"
@@ -150,12 +150,12 @@ while true; do
     fi
   fi
 
-  if [ "${strategy}" != "local" ] && (! dig -p 53 +tries=1 +time=1 @127.0.0.53 &> /dev/null || [ -z "$(dig -p 53 +short +tries=1 +time=1 @127.0.0.53)" ]); then
+  if [ "${strategy}" != "local" ] && (! dig +tries=1 +time=1 @127.0.0.53 &> /dev/null || [ -z "$(dig +short +tries=1 +time=1 @127.0.0.53)" ]); then
     systemctl restart systemd-resolved &> /dev/null
 
     sleep 10
 
-    if ! dig -p 53 +tries=1 +time=1 @127.0.0.53 &> /dev/null || [ -z "$(dig -p 53 +short +tries=1 +time=1 @127.0.0.53)" ]; then
+    if ! dig +tries=1 +time=1 @127.0.0.53 &> /dev/null || [ -z "$(dig +short +tries=1 +time=1 @127.0.0.53)" ]; then
       switch="local"
     fi
   fi
