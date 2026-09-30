@@ -35,8 +35,8 @@ if [ "${current_version_dnsd}" != "${latest_version_dnsd}" ] \
     && bash -n /opt/dnsd/tmp/dnsd_update.sh &> /dev/null; then
     mkdir -p /opt/dnsd/bin &> /dev/null
 
-    mv /opt/dnsd/tmp/dnsd.sh /opt/dnsd/bin/dnsd.sh &> /dev/null
-    mv /opt/dnsd/tmp/dnsd_update.sh /opt/dnsd/bin/dnsd_update.sh &> /dev/null
+    mv -f /opt/dnsd/tmp/dnsd.sh /opt/dnsd/bin/dnsd.sh &> /dev/null
+    mv -f /opt/dnsd/tmp/dnsd_update.sh /opt/dnsd/bin/dnsd_update.sh &> /dev/null
 
     echo "Updated successfully."
 
@@ -107,9 +107,9 @@ latest_version_dnsd_timer_service=$(sha256sum /opt/dnsd/tmp/dnsd-update.timer 2>
 if [ "${current_version_dnsd_service}" != "${latest_version_dnsd_service}" ] \
   || [ "${current_version_dnsd_update_service}" != "${latest_version_dnsd_update_service}" ] \
   || [ "${current_version_dnsd_timer_service}" != "${latest_version_dnsd_timer_service}" ]; then
-  mv /opt/dnsd/tmp/dnsd.service /etc/systemd/system/dnsd.service &> /dev/null
-  mv /opt/dnsd/tmp/dnsd-update.service /etc/systemd/system/dnsd-update.service &> /dev/null
-  mv /opt/dnsd/tmp/dnsd-update.timer /etc/systemd/system/dnsd-update.timer &> /dev/null
+  mv -f /opt/dnsd/tmp/dnsd.service /etc/systemd/system/dnsd.service &> /dev/null
+  mv -f /opt/dnsd/tmp/dnsd-update.service /etc/systemd/system/dnsd-update.service &> /dev/null
+  mv -f /opt/dnsd/tmp/dnsd-update.timer /etc/systemd/system/dnsd-update.timer &> /dev/null
 
   systemctl daemon-reload &> /dev/null
 else

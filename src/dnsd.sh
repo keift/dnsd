@@ -225,7 +225,7 @@ EOF
       if [ -f "/usr/share/defaults/dnscrypt-proxy/dnscrypt-proxy.toml" ]; then
         mkdir -p /etc/dnscrypt-proxy &> /dev/null
 
-        cp /usr/share/defaults/dnscrypt-proxy/dnscrypt-proxy.toml /etc/dnscrypt-proxy/dnscrypt-proxy.toml &> /dev/null
+        cp -f /usr/share/defaults/dnscrypt-proxy/dnscrypt-proxy.toml /etc/dnscrypt-proxy/dnscrypt-proxy.toml &> /dev/null
 
         dnscrypt_config="/etc/dnscrypt-proxy/dnscrypt-proxy.toml"
       else
