@@ -120,6 +120,8 @@ chattr -i /etc/resolv.conf &> /dev/null
 
 [ -f /run/systemd/resolve/stub-resolv.conf ] && ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf &> /dev/null
 
+[ -d /etc/systemd/resolved.conf.d ] && mkdir -p /etc/systemd/resolved.conf.d.bak && mv -f /etc/systemd/resolved.conf.d/* /etc/systemd/resolved.conf.d.bak &> /dev/null
+
 mkdir -p /opt/dnsd/state &> /dev/null
 
 strategy=$(cat /opt/dnsd/state/strategy 2> /dev/null || echo "none")
