@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "sign": "./scripts/sign.sh",
     "retouch": "bun run prettier",
     "prettier": "prettier --write ./"
   },

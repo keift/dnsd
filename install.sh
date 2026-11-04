@@ -171,7 +171,7 @@ fi
 
 echo -e "  ${legible}Installing dependencies...${reset}"
 
-install_package curl
+! command -v curl &> /dev/null && install_package curl
 
 [ "${package_manager}" = "rpm-ostree" ] && rpm-ostree apply-live &> "${log_redirects}"
 
@@ -195,15 +195,21 @@ rm -f /etc/systemd/system/dnsd-update.timer &> "${log_redirects}"
 
 mkdir -p /opt/dnsd/bin &> "${log_redirects}"
 
-curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/bin/dnsd.sh 2> "${log_redirects}"
+curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/bin/dnsd.sh > /opt/dnsd/bin/dnsd.sh 2> "${log_redirects}"
+curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/bin/dnsd.sh.sig > /opt/dnsd/bin/dnsd.sh.sig 2> "${log_redirects}"
 
 chmod +x /opt/dnsd/bin/dnsd.sh &> "${log_redirects}"
 
 if [ "${updates}" = true ]; then
-  curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_update.sh > /opt/dnsd/bin/dnsd_update.sh 2> "${log_redirects}"
+  curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/bin/dnsd_update.sh > /opt/dnsd/bin/dnsd_update.sh 2> "${log_redirects}"
+  curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/bin/dnsd_update.sh.sig > /opt/dnsd/bin/dnsd_update.sh.sig 2> "${log_redirects}"
 
   chmod +x /opt/dnsd/bin/dnsd_update.sh &> "${log_redirects}"
 fi
+
+mkdir -p /opt/dnsd/sign &> "${log_redirects}"
+
+curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/sign/ssh > /opt/dnsd/sign/ssh 2> "${log_redirects}"
 
 echo -e "  ${legible}Installing DNSD...${reset}"
 

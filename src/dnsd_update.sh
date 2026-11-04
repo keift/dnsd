@@ -6,10 +6,14 @@ echo "Checking for updates..."
 
 mkdir -p /opt/dnsd/tmp &> /dev/null
 
-if ! curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd.sh > /opt/dnsd/tmp/dnsd.sh 2> /dev/null \
-  || ! curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/dnsd_update.sh > /opt/dnsd/tmp/dnsd_update.sh 2> /dev/null; then
+if ! curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/bin/dnsd.sh > /opt/dnsd/tmp/dnsd.sh 2> /dev/null \
+  || ! curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/bin/dnsd.sh.sig > /opt/dnsd/tmp/dnsd.sh.sig 2> /dev/null \
+  || ! curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/bin/dnsd_update.sh > /opt/dnsd/tmp/dnsd_update.sh 2> /dev/null \
+  || ! curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/bin/dnsd_update.sh.sig > /opt/dnsd/tmp/dnsd_update.sh.sig 2> /dev/null; then
   rm -f /opt/dnsd/tmp/dnsd.sh &> /dev/null
+  rm -f /opt/dnsd/tmp/dnsd.sh.sig &> /dev/null
   rm -f /opt/dnsd/tmp/dnsd_update.sh &> /dev/null
+  rm -f /opt/dnsd/tmp/dnsd_update.sh.sig &> /dev/null
 
   echo "Something went wrong."
 
@@ -24,37 +28,65 @@ latest_version_dnsd_update=$(sha256sum /opt/dnsd/tmp/dnsd_update.sh 2> /dev/null
 
 if [ "${current_version_dnsd}" != "${latest_version_dnsd}" ] \
   || [ "${current_version_dnsd_update}" != "${latest_version_dnsd_update}" ]; then
-  echo "Updating to the latest version..."
+  echo "Verifying update..."
 
-  chmod +x /opt/dnsd/tmp/dnsd.sh &> /dev/null
-  chmod +x /opt/dnsd/tmp/dnsd_update.sh &> /dev/null
+  if ssh-keygen -Y verify -f /opt/dnsd/sign/ssh -I keift -n file -s /opt/dnsd/tmp/dnsd.sh.sig < /opt/dnsd/tmp/dnsd.sh &> /dev/null \
+    && ssh-keygen -Y verify -f /opt/dnsd/sign/ssh -I keift -n file -s /opt/dnsd/tmp/dnsd_update.sh.sig < /opt/dnsd/tmp/dnsd_update.sh &> /dev/null; then
+    echo "Updating to the latest version..."
 
-  if cat /opt/dnsd/tmp/dnsd.sh | grep -iq "#!/usr/bin/env bash" \
-    && cat /opt/dnsd/tmp/dnsd_update.sh | grep -iq "#!/usr/bin/env bash" \
-    && bash -n /opt/dnsd/tmp/dnsd.sh &> /dev/null \
-    && bash -n /opt/dnsd/tmp/dnsd_update.sh &> /dev/null; then
-    mkdir -p /opt/dnsd/bin &> /dev/null
+    chmod +x /opt/dnsd/tmp/dnsd.sh &> /dev/null
+    chmod +x /opt/dnsd/tmp/dnsd_update.sh &> /dev/null
 
-    mv -f /opt/dnsd/tmp/dnsd.sh /opt/dnsd/bin/dnsd.sh &> /dev/null
-    mv -f /opt/dnsd/tmp/dnsd_update.sh /opt/dnsd/bin/dnsd_update.sh &> /dev/null
+    if cat /opt/dnsd/tmp/dnsd.sh | grep -iq "#!/usr/bin/env bash" \
+      && cat /opt/dnsd/tmp/dnsd_update.sh | grep -iq "#!/usr/bin/env bash" \
+      && bash -n /opt/dnsd/tmp/dnsd.sh &> /dev/null \
+      && bash -n /opt/dnsd/tmp/dnsd_update.sh &> /dev/null; then
+      mkdir -p /opt/dnsd/bin &> /dev/null
 
-    echo "Updated successfully."
+      mv -f /opt/dnsd/tmp/dnsd.sh /opt/dnsd/bin/dnsd.sh &> /dev/null
+      mv -f /opt/dnsd/tmp/dnsd.sh.sig /opt/dnsd/bin/dnsd.sh.sig &> /dev/null
+      mv -f /opt/dnsd/tmp/dnsd_update.sh /opt/dnsd/bin/dnsd_update.sh &> /dev/null
+      mv -f /opt/dnsd/tmp/dnsd_update.sh.sig /opt/dnsd/bin/dnsd_update.sh.sig &> /dev/null
 
-    systemctl restart dnsd &> /dev/null
+      echo "Updated successfully."
 
-    systemctl restart dnsd-update &> /dev/null
-    systemctl restart dnsd-update.timer &> /dev/null
+      systemctl restart dnsd &> /dev/null
+
+      systemctl restart dnsd-update &> /dev/null
+      systemctl restart dnsd-update.timer &> /dev/null
+    else
+      rm -f /opt/dnsd/tmp/dnsd.sh &> /dev/null
+      rm -f /opt/dnsd/tmp/dnsd.sh.sig &> /dev/null
+      rm -f /opt/dnsd/tmp/dnsd_update.sh &> /dev/null
+      rm -f /opt/dnsd/tmp/dnsd_update.sh.sig &> /dev/null
+
+      echo "Something went wrong."
+    fi
   else
     rm -f /opt/dnsd/tmp/dnsd.sh &> /dev/null
+    rm -f /opt/dnsd/tmp/dnsd.sh.sig &> /dev/null
     rm -f /opt/dnsd/tmp/dnsd_update.sh &> /dev/null
+    rm -f /opt/dnsd/tmp/dnsd_update.sh.sig &> /dev/null
 
-    echo "Something went wrong."
+    echo "The update could not be verified."
   fi
 else
   rm -f /opt/dnsd/tmp/dnsd.sh &> /dev/null
+  rm -f /opt/dnsd/tmp/dnsd.sh.sig &> /dev/null
   rm -f /opt/dnsd/tmp/dnsd_update.sh &> /dev/null
+  rm -f /opt/dnsd/tmp/dnsd_update.sh.sig &> /dev/null
 
   echo "No updates found."
+fi
+
+if [ ! -s /opt/dnsd/sign/ssh ]; then
+  mkdir -p /opt/dnsd/sign &> /dev/null
+
+  if curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/sign/ssh > /opt/dnsd/tmp/ssh 2> /dev/null; then
+    mv -f /opt/dnsd/tmp/ssh /opt/dnsd/sign/ssh &> /dev/null
+  else
+    rm -f /opt/dnsd/tmp/ssh &> /dev/null
+  fi
 fi
 
 tee /opt/dnsd/tmp/dnsd.service &> /dev/null << EOF
