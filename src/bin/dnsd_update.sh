@@ -28,7 +28,7 @@ latest_version_dnsd_update=$(sha256sum /opt/dnsd/tmp/dnsd_update.sh 2> /dev/null
 
 if [ "${current_version_dnsd}" != "${latest_version_dnsd}" ] \
   || [ "${current_version_dnsd_update}" != "${latest_version_dnsd_update}" ]; then
-  echo "Verifying update..."
+  echo "Verifying updates..."
 
   if ssh-keygen -Y verify -f /opt/dnsd/sign/ssh -I keift -n file -s /opt/dnsd/tmp/dnsd.sh.sig < /opt/dnsd/tmp/dnsd.sh &> /dev/null \
     && ssh-keygen -Y verify -f /opt/dnsd/sign/ssh -I keift -n file -s /opt/dnsd/tmp/dnsd_update.sh.sig < /opt/dnsd/tmp/dnsd_update.sh &> /dev/null; then
@@ -68,7 +68,7 @@ if [ "${current_version_dnsd}" != "${latest_version_dnsd}" ] \
     rm -f /opt/dnsd/tmp/dnsd_update.sh &> /dev/null
     rm -f /opt/dnsd/tmp/dnsd_update.sh.sig &> /dev/null
 
-    echo "The update could not be verified."
+    echo "Updates could not be verified."
   fi
 else
   rm -f /opt/dnsd/tmp/dnsd.sh &> /dev/null
