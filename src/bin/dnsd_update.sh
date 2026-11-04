@@ -79,6 +79,7 @@ else
   echo "No updates found."
 fi
 
+# Temporary declaring
 if [ ! -s /opt/dnsd/sign/ssh ]; then
   mkdir -p /opt/dnsd/sign &> /dev/null
 
@@ -88,6 +89,7 @@ if [ ! -s /opt/dnsd/sign/ssh ]; then
     rm -f /opt/dnsd/tmp/ssh &> /dev/null
   fi
 fi
+# -------------------
 
 tee /opt/dnsd/tmp/dnsd.service &> /dev/null << EOF
 [Unit]
