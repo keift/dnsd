@@ -37,9 +37,7 @@ if [ "${current_version_dnsd}" != "${latest_version_dnsd}" ] \
     chmod +x /opt/dnsd/tmp/dnsd.sh &> /dev/null
     chmod +x /opt/dnsd/tmp/dnsd_update.sh &> /dev/null
 
-    if cat /opt/dnsd/tmp/dnsd.sh | grep -iq "#!/usr/bin/env bash" \
-      && cat /opt/dnsd/tmp/dnsd_update.sh | grep -iq "#!/usr/bin/env bash" \
-      && bash -n /opt/dnsd/tmp/dnsd.sh &> /dev/null \
+    if bash -n /opt/dnsd/tmp/dnsd.sh &> /dev/null \
       && bash -n /opt/dnsd/tmp/dnsd_update.sh &> /dev/null; then
       mkdir -p /opt/dnsd/bin &> /dev/null
 
