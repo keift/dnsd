@@ -35,7 +35,7 @@ gray="\e[90m"
 
 version="1.0"
 
-last_commit_id=$(curl -s --max-time 10 https://api.github.com/repos/keift/dnsd/commits/main | grep -m 1 '"sha":' | cut -d '"' -f 4 | cut -c 1-7)
+last_commit_id=$(curl -fsSL --max-time 10 https://api.github.com/repos/keift/dnsd/commits/main | grep -m 1 '"sha":' | cut -d '"' -f 4 | cut -c 1-7)
 
 detect_system() {
   if command -v rpm-ostree &> /dev/null; then
