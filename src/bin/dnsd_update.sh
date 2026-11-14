@@ -77,18 +77,6 @@ else
   echo "No updates found."
 fi
 
-# Temporary declaring
-if [ ! -s /opt/dnsd/sign/ssh ]; then
-  mkdir -p /opt/dnsd/sign &> /dev/null
-
-  if curl -fsSL https://raw.github.com/keift/dnsd/refs/heads/main/src/sign/ssh > /opt/dnsd/tmp/ssh 2> /dev/null; then
-    mv -f /opt/dnsd/tmp/ssh /opt/dnsd/sign/ssh &> /dev/null
-  else
-    rm -f /opt/dnsd/tmp/ssh &> /dev/null
-  fi
-fi
-# -------------------
-
 tee /opt/dnsd/tmp/dnsd.service &> /dev/null << EOF
 [Unit]
 Description=Maintain your systemd-resolved
